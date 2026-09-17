@@ -1,8 +1,18 @@
-# KDE directory preferences
+# Operating system files
 .directory
-
-# Linux trash folder
-.Trash-*<Paste>
-
-# macOS DS_Store files
+.Trash-*
 .DS_Store
+
+# Node dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
+# Log files
+*.log
