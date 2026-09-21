@@ -8,6 +8,12 @@ app.use(cors({
   origin: clientUrl
 }))
 
+app.get('/api/health', (request, response) => {
+  response.json({
+    status: 'ok'
+  })
+})
+
 app.use(express.json())
 
 export default app
