@@ -105,6 +105,35 @@ Your repository must remain **Private** for the entire course. This protects you
 
 ## Documenting Your Project
 
+### Technical Overview
+
+The application uses a client-server architecture. The React client communicates with an Express REST API, while Prisma is used as the database layer for PostgreSQL.
+
+`React client → Express REST API → Prisma ORM → PostgreSQL`
+
+| Technology | What it does | Why I selected it |
+| -----------| -------------| ----------------- |
+| [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)   | Main programming language for both the client and server. | I already have experience with JavaScript, and using the same language throughout the application makes the project easier for me to understand and maintain. |
+| [React](https://react.dev/) | Builds the user interface using reusable components. | I have some previous experience with React, and I think its component-based structure fits an application with several pages, forms and changing states. |
+| [Vite](https://vite.dev/) | Provides the frontend development server and creates production builds. | I selected Vite because it provides a simple setup for React and gives me a fast development environment with automatic updates while working. |
+| [Tailwind CSS](https://tailwindcss.com/docs) | Provides utility classes for styling and responsive design. | It supports the mobile-first requirement and I already have some previous experience using it. |
+| [React Router](https://reactrouter.com/start/modes) | Handles navigation between pages in the React application. | I only need straightforward client-side routing, so Declarative Mode gives me the functionality I need without introducing a more advanced framework. |
+| [Node.js](https://nodejs.org/docs/latest-v22.x/api/) | Runs JavaScript outside the browser and provides the runtime for the backend. | I selected Node.js because it allows me to use JavaScript for both the frontend and backend while learning more about server-side development. |
+| [Express](https://expressjs.com/) | Handles HTTP requests, middleware and API routes. | I wanted a relatively small framework that lets me build the API myself and understand how routes, requests and middleware work. |
+| [PostgreSQL](https://www.postgresql.org/docs/) | Stores the application's persistent data in a relational database. | Working with databases is new to me but I selected PostgreSQL because the system contains clearly related data, such as users, equipment types, equipment units and future reservations.                           |
+| [Prisma ORM 7](https://www.prisma.io/docs/orm/v7) | Defines the database schema, manages migrations and provides an API for database operations. | Prisma gives me a clearer structure for defining models and migrations while still allowing me to work mainly with JavaScript. |
+| [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) | Sends HTTP requests from the React client to the Express API. | I have used Fetch before, and since it is built into modern browsers I do not need to add another library for API requests. |
+
+#### Supporting Tools
+
+* [dotenv](https://github.com/motdotla/dotenv) loads environment-specific configuration, such as ports and database connection details, from local environment files. I use it to avoid hardcoding local configuration and credentials in the source code.
+* [CORS middleware](https://expressjs.com/en/resources/middleware/cors/) allows the React development server to communicate with the Express API when they are running on different ports.
+* [ESLint](https://eslint.org/docs/latest/) checks the source code for common problems and helps me maintain a consistent code style.
+
+Environment files containing local configuration or credentials are excluded from Git. Example environment files are included to document which variables are required without exposing passwords or other private values.
+
+---
+
 Once Sprint 2 begins, add a **User Manual** section to this README, covering:
 - **Installing** — what's needed to set up your project locally (dependencies, environment, etc.)
 - **Running** — how to start/execute the application
