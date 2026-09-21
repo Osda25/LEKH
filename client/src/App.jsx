@@ -8,6 +8,7 @@ import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
 import Equipment from './components/Equipment.jsx'
 import EquipmentDetails from './components/EquipmentDetails.jsx'
+import ApiStatus from './components/ApiStatus.jsx'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           />
           <Route path="*" element={<h1>Page not found</h1>} />
         </Routes>
+        <ApiStatus />
       </main>
     </>
   )
