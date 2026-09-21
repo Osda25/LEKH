@@ -4,11 +4,32 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider               = "prisma-client"
-  output                 = "../src/generated/prisma"
-  moduleFormat           = "esm"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Role {
+  USER
+  CARETAKER
+  ADMIN
+}
+
+model User {
+  id           Int    @id @default(autoincrement())
+  name         String
+  email        String @unique
+  phone        String
+  passwordHash String
+  role         Role   @default(USER)
+}
+
+model EquipmentType {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
 }
