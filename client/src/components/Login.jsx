@@ -1,3 +1,17 @@
+import { useLocation } from 'react-router'
+
 export default function Login() {
-  return <h1>Log in</h1>
+  const location = useLocation()
+
+  return (
+    <>
+      <h1 className="text-2xl font-bold">Log in</h1>
+
+      {location.state?.message && (
+        <p role="status" className="mt-4 text-green-800">
+          {location.state.message}
+        </p>
+      )}
+    </>
+  )
 }
