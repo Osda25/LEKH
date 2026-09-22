@@ -8,18 +8,11 @@ import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
 import Equipment from './components/Equipment.jsx'
 import EquipmentDetails from './components/EquipmentDetails.jsx'
-import ApiStatus from './components/ApiStatus.jsx'
 
 export default function App() {
   return (
     <>
-      <nav className="flex gap-4 p-4">
-        <Link to="/register">Register</Link>
-        <Link to="/login">Log in</Link>
-        <Link to="/equipment">Equipment</Link>
-      </nav>
-
-      <main className="p-4">
+      <main>
         <Routes>
           <Route
             path="/"
@@ -34,7 +27,6 @@ export default function App() {
           />
           <Route path="*" element={<h1>Page not found</h1>} />
         </Routes>
-        <ApiStatus />
       </main>
     </>
   )
