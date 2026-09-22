@@ -1,8 +1,9 @@
 import 'dotenv/config'
-import express from 'express'
+import express, { request } from 'express'
 import bcrypt from 'bcrypt'
 import prisma from '../prisma.js'
 import jwt from 'jsonwebtoken'
+import requireAuth from '../middleware/requireAuth.js'
 
 const jwtSecret = process.env.JWT_SECRET
 
@@ -177,6 +178,12 @@ router.post('/login', async (request, response) => {
       error: 'Login could not be completed.'
     })
   }
+})
+
+router.get('/me', requireAuth, (request, response) => {
+  return response.status(200).json({
+    userId: request.auth.userId
+  })
 })
 
 export default router
