@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import express, { request } from 'express'
+import express from 'express'
 import bcrypt from 'bcrypt'
 import prisma from '../prisma.js'
 import jwt from 'jsonwebtoken'
@@ -173,7 +173,7 @@ router.post('/login', async (request, response) => {
       token: token
     })
 
-  } catch (error){
+  } catch {
     return response.status(500).json({
       error: 'Login could not be completed.'
     })

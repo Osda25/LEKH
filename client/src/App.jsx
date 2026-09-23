@@ -1,15 +1,18 @@
 import {
-  Link,
   Navigate,
   Route,
-  Routes
+  Routes,
+  useLocation
 } from 'react-router'
 import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
 import Equipment from './components/Equipment.jsx'
 import EquipmentDetails from './components/EquipmentDetails.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 export default function App() {
+  const location = useLocation()
+
   return (
     <>
       <main>
@@ -20,12 +23,18 @@ export default function App() {
           />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/equipment" element={<Equipment />} />
+          <Route path="/equipment" element={
+            <ProtectedRoute key={location.pathname}>
+              <Equipment />
+            </ProtectedRoute>} />
           <Route
             path="/equipment/:id"
-            element={<EquipmentDetails />}
+            element={
+            <ProtectedRoute key={location.pathname}>
+              <EquipmentDetails />
+            </ProtectedRoute>}
           />
-          <Route path="*" element={<h1>Page not found</h1>} />
+          <Route path="*" element={<Navigate to="/equipment" replace />} />
         </Routes>
       </main>
     </>
