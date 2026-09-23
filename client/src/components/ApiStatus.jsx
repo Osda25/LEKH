@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { apiFetch } from "../services/api.js";
+import { useState, useEffect } from "react"
+import { apiFetch } from "../services/api.js"
 
 export default function ApiStatus() {
-  const [status, setStatus] = useState('connecting');
+  const [status, setStatus] = useState('connecting')
 
   useEffect(() => {
     async function checkApi() {
