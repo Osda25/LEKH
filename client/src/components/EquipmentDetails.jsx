@@ -1,3 +1,3 @@
 export default function EquipmentDetails() {
-  return <h1>Equipment details</h1>
+  return <p>Equipment Details</p>
 }
