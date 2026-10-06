@@ -1,6 +1,11 @@
 import { Link } from "react-router"
 
 export default function EquipmentCard({ equipmentType }) {
+  const availabilityText =
+    equipmentType.available
+      ? 'Available'
+      : 'Unavailable'
+
   return (
     <li className="mt-4 w-full rounded-xl border border-field-border bg-field">
       <Link
@@ -11,9 +16,21 @@ export default function EquipmentCard({ equipmentType }) {
 
         <p className="mt-2">{equipmentType.description}</p>
 
-        <span className="mt-4 block text-right font-bold">
-          View details
-        </span>
+        <div className="flex items-start justify-between gap-4 mt-4">
+          <span
+            className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium ${
+              equipmentType.available
+                ? 'bg-success-bg text-success'
+                : 'bg-danger-bg text-danger'
+            }`}
+          >
+            {availabilityText}
+          </span>
+
+          <span className="block text-right font-bold">
+            View details
+          </span>
+        </div>
       </Link>
     </li>
   )

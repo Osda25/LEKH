@@ -10,8 +10,30 @@ router.get('/', requireAuth, async (request, response) => {
     const equipmentTypes = await prisma.equipmentType.findMany({
       orderBy: {
         name: 'asc'
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        units: {
+          select: {
+            condition: true
+          }
+        }
       }
     })
+
+    for (const type of equipmentTypes) {
+      let availableType = false
+
+      for (const unit of type.units) {
+        if (unit.condition === 'IN_SERVICE') {
+          availableType = true
+        } 
+      }
+
+      type.available = availableType
+    }
 
     return response.status(200).json(equipmentTypes)
   } catch {
