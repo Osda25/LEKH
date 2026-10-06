@@ -35,10 +35,11 @@ model User {
 }
 
 model EquipmentType {
-  id          Int             @id @default(autoincrement())
-  name        String          @unique
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
   description String
   units       EquipmentUnit[]
+  guides      EquipmentGuide[]
 }
 
 model EquipmentUnit {
@@ -46,6 +47,16 @@ model EquipmentUnit {
   identifier String        @unique
   location   String
   condition  UnitCondition @default(IN_SERVICE)
+
+  equipmentTypeId Int
+  equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
+}
+
+model EquipmentGuide {
+  id      Int     @id @default(autoincrement())
+  title   String
+  content String
+  url     String?
 
   equipmentTypeId Int
   equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
