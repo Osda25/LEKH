@@ -22,26 +22,26 @@ export default function Equipment() {
     loadEquipment()
   },[])
 
-    function renderEquipment() {
-      if (isLoading) {
-        return <li className="italic">Loading equipment...</li>;
-      }
+  function renderEquipment() {
+    if (isLoading) {
+      return <li className="italic">Loading equipment...</li>;
+    }
 
-      if (error) {
-        return <li className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</li>;
-      }
+    if (error) {
+      return <li className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</li>;
+    }
 
-      if (equipmentTypes.length === 0) {
-        return <li className="">No equipment to show.</li>;
-      }
+    if (equipmentTypes.length === 0) {
+      return <li className="">No equipment to show.</li>;
+    }
 
-      return equipmentTypes.map((equipmentType) => (
-        <EquipmentCard
-          key={equipmentType.id}
-          equipmentType={equipmentType}
-        />
-      ));
-    } 
+    return equipmentTypes.map((equipmentType) => (
+      <EquipmentCard
+        key={equipmentType.id}
+        equipmentType={equipmentType}
+      />
+    ));
+  } 
 
   return (
     <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
