@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
 import Logo from './Logo'
+import EquipmentUnitCard from './EquipmentUnitCard'
 
 export default function EquipmentDetails() {
   const { id } = useParams()
@@ -26,6 +27,19 @@ export default function EquipmentDetails() {
     loadEquipmentType()
   }, [id])
 
+  function renderUnits() {
+    if (equipmentType.units.length === 0) {
+      return <li className="mt-4 p-4 w-full rounded-xl border border-field-border bg-field">No equipment units to show.</li>;
+    }
+
+    return equipmentType.units.map((equipmentUnit) => (
+      <EquipmentUnitCard
+        key={equipmentUnit.id}
+        equipmentUnit={equipmentUnit}
+      />
+    ));
+  }
+
   return (
       <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
         <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
@@ -46,12 +60,13 @@ export default function EquipmentDetails() {
             {error ? (
               <p role="alert">{error}</p>
             ) : equipmentType ? (
-              <div className="p-4 w-full rounded-xl border border-field-border bg-field">
+              <>
                 <h1 className=" m-3 text-xl font-bold text-center">{equipmentType.name}</h1>
                 <p>
                   {equipmentType.description?.trim() || 'No description available.'}
                 </p>
-              </div>
+                <ul className="flex flex-col gap-4">{renderUnits()}</ul>
+              </>
             ) : (
               <p>Loading equipment details...</p>
             )}
