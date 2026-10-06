@@ -36,7 +36,15 @@ router.get('/:id', requireAuth, async (request, response) => {
       select: {
         id: true,
         name: true,
-        description: true
+        description: true,
+        units: {
+          select: {
+            id: true,
+            identifier: true,
+            location: true,
+            condition: true
+          }
+        }
       }
     })
 
@@ -45,6 +53,19 @@ router.get('/:id', requireAuth, async (request, response) => {
         error: 'Equipment type not found.'
       })
     }
+
+    let availableType = false
+
+    for (const unit of equipmentType.units) {
+      if (unit.condition === 'IN_SERVICE') {
+        unit.available = true
+        availableType = true
+      } else {
+        unit.available = false
+      }
+    }
+
+    equipmentType.available = availableType
 
     return response.status(200).json(equipmentType)
   } catch {
