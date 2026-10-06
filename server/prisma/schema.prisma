@@ -4,9 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider     = "prisma-client"
-  output       = "../src/generated/prisma"
-  moduleFormat = "esm"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
   importFileExtension = "ts"
 }
 
@@ -20,6 +20,11 @@ enum Role {
   ADMIN
 }
 
+enum UnitCondition {
+  IN_SERVICE
+  OUT_OF_SERVICE
+}
+
 model User {
   id           Int    @id @default(autoincrement())
   name         String
@@ -30,7 +35,18 @@ model User {
 }
 
 model EquipmentType {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
+  id          Int             @id @default(autoincrement())
+  name        String          @unique
   description String
+  units       EquipmentUnit[]
+}
+
+model EquipmentUnit {
+  id         Int           @id @default(autoincrement())
+  identifier String        @unique
+  location   String
+  condition  UnitCondition @default(IN_SERVICE)
+
+  equipmentTypeId Int
+  equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
 }
