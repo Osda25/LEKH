@@ -21,4 +21,37 @@ router.get('/', requireAuth, async (request, response) => {
   }
 })
 
+router.get('/:id', requireAuth, async (request, response) => {
+  const id = Number(request.params.id)
+
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return response.status(400).json({
+      error: 'Invalid equipment type ID.'
+    })
+  }
+
+  try {
+    const equipmentType = await prisma.equipmentType.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        description: true
+      }
+    })
+
+    if (!equipmentType) {
+      return response.status(404).json({
+        error: 'Equipment type not found.'
+      })
+    }
+
+    return response.status(200).json(equipmentType)
+  } catch {
+    return response.status(500).json({
+      error: 'Equipment type could not be retrieved.'
+    })
+  }
+})
+
 export default router

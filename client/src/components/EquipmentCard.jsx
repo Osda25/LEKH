@@ -2,7 +2,7 @@ import { Link } from "react-router"
 
 export default function EquipmentCard({ equipmentType }) {
   return (
-    <li className="mt-4 w-full rounded-3xl border border-field-border bg-field">
+    <li className="mt-4 w-full rounded-xl border border-field-border bg-field">
       <Link
         to={`/equipment/${equipmentType.id}`}
         className="block rounded-3xl p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
