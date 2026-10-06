@@ -71,6 +71,14 @@ router.get('/:id', requireAuth, async (request, response) => {
             location: true,
             condition: true
           }
+        },
+        guides: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            url: true
+          }
         }
       }
     })
