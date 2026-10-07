@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
 import Logo from './Logo'
 import EquipmentUnitCard from './EquipmentUnitCard'
+import EquipmentGuideCard from './EquipmentGuideCard'
 
 export default function EquipmentDetails() {
   const { id } = useParams()
@@ -40,6 +41,23 @@ export default function EquipmentDetails() {
     ));
   }
 
+  function renderGuides() {
+    if (equipmentType.guides.length === 0) {
+      return (
+        <li className="w-full rounded-xl border border-field-border bg-field p-4">
+          No equipment guides available.
+        </li>
+      )
+    }
+
+    return equipmentType.guides.map((guide) => (
+      <EquipmentGuideCard
+        key={guide.id}
+        guide={guide}
+      />
+    ))
+  }
+
   return (
       <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
         <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
@@ -61,16 +79,25 @@ export default function EquipmentDetails() {
               <p role="alert">{error}</p>
             ) : equipmentType ? (
               <>
-                <h1 className=" m-3 text-xl font-bold text-center">{equipmentType.name}</h1>
+                <h2 className=" m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
                 <p>
                   {equipmentType.description?.trim() || 'No description available.'}
                 </p>
                 <ul className="flex flex-col gap-4">{renderUnits()}</ul>
+
+                <h2 className="mt-4 text-lg font-bold text-center">
+                  Guides
+                </h2>
+
+                <ul className="flex flex-col gap-4">
+                  {renderGuides()}
+                </ul>
               </>
             ) : (
               <p>Loading equipment details...</p>
             )}
           </div>
+
         </div>
       </section>
     )

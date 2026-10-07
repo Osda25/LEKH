@@ -23,19 +23,24 @@ router.get('/', requireAuth, async (request, response) => {
       }
     })
 
-    for (const type of equipmentTypes) {
+    const result = equipmentTypes.map((type) => {
       let availableType = false
 
       for (const unit of type.units) {
         if (unit.condition === 'IN_SERVICE') {
           availableType = true
-        } 
+        }
       }
 
-      type.available = availableType
-    }
+      return {
+        id: type.id,
+        name: type.name,
+        description: type.description,
+        available: availableType
+      }
+    })
 
-    return response.status(200).json(equipmentTypes)
+    return response.status(200).json(result)
   } catch {
     return response.status(500).json({
       error: 'Equipment could not be retrieved.'
@@ -65,6 +70,14 @@ router.get('/:id', requireAuth, async (request, response) => {
             identifier: true,
             location: true,
             condition: true
+          }
+        },
+        guides: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            url: true
           }
         }
       }
