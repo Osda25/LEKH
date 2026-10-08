@@ -170,6 +170,7 @@ router.post('/login', async (request, response) => {
     return response.status(200).json({
       message: 'Credentials verified',
       userId: user.id,
+      role: user.role,
       token: token
     })
 
@@ -180,10 +181,33 @@ router.post('/login', async (request, response) => {
   }
 })
 
-router.get('/me', requireAuth, (request, response) => {
-  return response.status(200).json({
-    userId: request.auth.userId
-  })
+router.get('/me', requireAuth, async (request, response) => {
+  const userId = Number(request.auth.userId)
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        role: true
+      }
+    })
+
+    if (!user) {
+      return response.status(401).json({
+        error: 'User could not be authenticated.'
+      })
+    }
+
+    return response.status(200).json({
+      userId: user.id,
+      role: user.role
+    })
+  } catch {
+    return response.status(500).json({
+      error: 'User information could not be retrieved.'
+    })
+  }
 })
 
 export default router

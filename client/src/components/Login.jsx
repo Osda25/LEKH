@@ -50,6 +50,17 @@ export default function Login() {
 
       saveToken(data.token)
 
+      if (data.role === 'CARETAKER' || data.role === 'ADMIN') {
+        navigate('/dashboard', {
+          replace: true,
+          state: {
+            message: 'Login successful.'
+          }
+        })
+
+        return
+      }
+
       navigate('/equipment', {
         replace: true,
         state: {
