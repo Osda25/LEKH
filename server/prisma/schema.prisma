@@ -37,7 +37,8 @@ model User {
 model EquipmentType {
   id          Int              @id @default(autoincrement())
   name        String           @unique
-  description String
+  category    String
+  description String?
   units       EquipmentUnit[]
   guides      EquipmentGuide[]
 }
