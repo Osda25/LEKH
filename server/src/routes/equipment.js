@@ -50,6 +50,10 @@ router.get('/', requireAuth, async (request, response) => {
   }
 })
 
+router.get('/categories', requireAuth, (request, response) => {
+  return response.status(200).json(equipmentCategories)
+})
+
 router.get('/:id', requireAuth, async (request, response) => {
   const id = Number(request.params.id)
 
@@ -65,6 +69,7 @@ router.get('/:id', requireAuth, async (request, response) => {
       select: {
         id: true,
         name: true,
+        category: true,
         description: true,
         units: {
           select: {

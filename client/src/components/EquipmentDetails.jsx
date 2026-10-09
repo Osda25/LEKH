@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router'
+import { Link, useParams, useLocation } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
 import Logo from './Logo'
@@ -7,8 +7,10 @@ import EquipmentGuideCard from './EquipmentGuideCard'
 
 export default function EquipmentDetails() {
   const { id } = useParams()
+  const location = useLocation()
   const [equipmentType, setEquipmentType] = useState()
   const [error, setError] = useState('')
+
 
   useEffect(() => {
     async function loadEquipmentType() {
@@ -79,7 +81,16 @@ export default function EquipmentDetails() {
               <p role="alert">{error}</p>
             ) : equipmentType ? (
               <>
-                <h2 className=" m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
+                {location.state?.message && (
+                  <p
+                    role="status"
+                    className="rounded-lg bg-success-bg p-3 text-sm text-success"
+                  >
+                    {location.state.message}
+                  </p>
+                )}
+                <h2 className="m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
+                <h3 className="text-xl italic">{equipmentType.category?.trim() || 'Unknown category.'}</h3>
                 <p>
                   {equipmentType.description?.trim() || 'No description available.'}
                 </p>
