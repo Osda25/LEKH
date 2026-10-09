@@ -3,14 +3,22 @@ import { Navigate } from 'react-router'
 import { getToken, removeToken } from '../services/token.js'
 import { apiFetch } from "../services/api.js"
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, allowedRoles }) {
   const [status, setStatus] = useState('checking')
   const token = getToken()
 
   useEffect(() => {
     async function checkAuthentication() {
       try {
-        await apiFetch('/api/auth/me')
+        const result = await apiFetch('/api/auth/me')
+
+        if (
+          allowedRoles &&
+          !allowedRoles.includes(result.role)
+        ) {
+          setStatus('forbidden')
+          return
+        }
         setStatus('authenticated')
       } catch (error) {
         if (error.status === 401) {
@@ -35,6 +43,10 @@ function ProtectedRoute({ children }) {
 
   if (status === 'checking') {
     return <p>Checking session...</p>
+  }
+
+  if (status === 'forbidden') {
+    return <Navigate to="/equipment" replace state={{ message: 'Permission forbidden' }} />
   }
 
   if (status === 'unauthenticated') {

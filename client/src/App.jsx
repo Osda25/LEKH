@@ -9,6 +9,8 @@ import Login from './components/Login.jsx'
 import Equipment from './components/Equipment.jsx'
 import EquipmentDetails from './components/EquipmentDetails.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Dashboard from './components/Dashboard.jsx'
+import AddEquipmentType from './components/AddEquipmentType.jsx'
 
 export default function App() {
   const location = useLocation()
@@ -26,13 +28,28 @@ export default function App() {
           <Route path="/equipment" element={
             <ProtectedRoute key={location.pathname}>
               <Equipment />
-            </ProtectedRoute>} />
+            </ProtectedRoute>} 
+          />
           <Route
             path="/equipment/:id"
             element={
             <ProtectedRoute key={location.pathname}>
               <EquipmentDetails />
             </ProtectedRoute>}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['CARETAKER', 'ADMIN']}>
+                <Dashboard />
+              </ProtectedRoute>}
+          />
+          <Route
+            path="/dashboard/equipment/new"
+            element={
+              <ProtectedRoute allowedRoles={['CARETAKER', 'ADMIN']}>
+                <AddEquipmentType />
+              </ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to="/equipment" replace />} />
         </Routes>

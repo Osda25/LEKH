@@ -2,6 +2,8 @@ import 'dotenv/config'
 import express from 'express'
 import prisma from '../prisma.js'
 import requireAuth from '../middleware/requireAuth.js'
+import requireRole from '../middleware/requireRole.js'
+import equipmentCategories from '../constants/equipmentCategory.js'
 
 const router = express.Router()
 
@@ -48,6 +50,10 @@ router.get('/', requireAuth, async (request, response) => {
   }
 })
 
+router.get('/categories', requireAuth, (request, response) => {
+  return response.status(200).json(equipmentCategories)
+})
+
 router.get('/:id', requireAuth, async (request, response) => {
   const id = Number(request.params.id)
 
@@ -63,6 +69,7 @@ router.get('/:id', requireAuth, async (request, response) => {
       select: {
         id: true,
         name: true,
+        category: true,
         description: true,
         units: {
           select: {
@@ -106,6 +113,85 @@ router.get('/:id', requireAuth, async (request, response) => {
   } catch {
     return response.status(500).json({
       error: 'Equipment type could not be retrieved.'
+    })
+  }
+})
+
+router.post('/', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Request body is required.'
+    })
+  }
+
+  const { name, category, description } = request.body
+
+  if (
+    typeof name !== 'string' ||
+    typeof category !== 'string' ||
+    (description !== undefined && typeof description !== 'string')
+  ) {
+    return response.status(400).json({
+      error: 'Name, category and description must be provided as text.'
+    })
+  }
+
+  const normalizedName = name.trim()
+  const normalizedCategory = category.trim()
+  let normalizedDescription
+
+  if (description !== undefined) {
+    normalizedDescription = description.trim()
+  }
+
+  if (
+    !normalizedName ||
+    !normalizedCategory
+  ) {
+    return response.status(400).json({
+      error: 'Name and category are required.'
+    })
+  }
+
+  if (!equipmentCategories.includes(normalizedCategory)) {
+    return response.status(400).json({
+      error: 'Enter a valid category.'
+    })
+  }
+
+  try {
+    const equipmentType = await prisma.equipmentType.create({
+      data: {
+        name: normalizedName,
+        category: normalizedCategory,
+        description: normalizedDescription
+      },
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        description: true
+      }
+    })
+
+    return response.status(201).json({
+      message: 'Equipment type successfully created.',
+      data: equipmentType
+    })
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return response.status(409).json({
+        error: 'An equipment type with this name already exists.'
+      })
+    }
+
+    console.error('Equipment type creation failed:', {
+      name: error.name,
+      code: error.code
+    })
+
+    return response.status(500).json({
+      error: 'Equipment type could not be created.'
     })
   }
 })
