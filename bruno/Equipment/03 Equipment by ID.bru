@@ -1,0 +1,25 @@
+meta {
+  name: Get equipment type by ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/equipment/{{equipmentId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Returns HTTP 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}
+
+docs {
+Set equipmentId in the Local environment to an existing ID. A successful Create equipment type request also sets equipmentId for the session.
+}

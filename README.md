@@ -134,7 +134,88 @@ Environment files containing local configuration or credentials are excluded fro
 
 ---
 
-Once Sprint 2 begins, add a **User Manual** section to this README, covering:
-- **Installing** — what's needed to set up your project locally (dependencies, environment, etc.)
-- **Running** — how to start/execute the application
+## User Manual
 
+### Installing
+
+#### Prerequisites
+
+The following tools are required to run the application locally:
+
+- **Node.js** (version 22 used during development) and npm
+- **PostgreSQL**
+- **Git**
+
+#### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/dipt-pa1493-ht26/pa1493-osda25-lekh-zda.git
+   cd pa1493-osda25-lekh-zda
+   ```
+
+2. Install the frontend and backend dependencies:
+
+   ```bash
+   cd client
+   npm install
+   cd ../server
+   npm install
+   ```
+
+3. Make sure PostgreSQL is running and create a local database named `lekh_dev`.
+
+4. Configure the backend environment:
+
+   From the `server` directory, copy `.env.example` to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Update `DATABASE_URL` with your PostgreSQL credentials and set a secure `JWT_SECRET`. Instructions for generating a secret are included in `.env.example`.
+
+5. Apply the database migrations and generate Prisma Client:
+
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
+
+6. Configure the frontend environment:
+
+   ```bash
+   cd ../client
+   cp .env.example .env
+   ```
+
+   The default `VITE_API_URL` points to `http://localhost:3001`.
+
+   Do not commit `.env` files containing credentials or secrets.
+
+### Running
+
+The frontend and backend must be started in separate terminals.
+
+**Start the backend**
+
+From the `server` directory:
+
+```bash
+npm run dev
+```
+
+The backend runs at `http://localhost:3001`.
+
+**Start the frontend**
+
+From the `client` directory:
+
+```bash
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173`.
+
+Open `http://localhost:5173` in your browser to access the application. You can register a new user account and log in.

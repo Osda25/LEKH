@@ -1,0 +1,21 @@
+meta {
+  name: Invalid equipment ID - 400
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/equipment/not-a-number
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Returns HTTP 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

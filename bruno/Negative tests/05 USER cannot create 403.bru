@@ -1,0 +1,33 @@
+meta {
+  name: USER cannot create - 403
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/equipment
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Bruno Unauthorized Test",
+    "category": "Other Equipment"
+  }
+}
+
+tests {
+  test("Returns HTTP 403", function () {
+    expect(res.status).to.equal(403);
+  });
+}
+
+docs {
+Login with a regular USER token. If logged in as CARETAKER/ADMIN, this request will NOT return 403 and may create a record.
+}

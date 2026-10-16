@@ -12,6 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AddEquipmentType from './components/AddEquipmentType.jsx'
 
+const MANAGEMENT_ROLES = ['CARETAKER', 'ADMIN']
+
 export default function App() {
   const location = useLocation()
 
@@ -40,14 +42,14 @@ export default function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['CARETAKER', 'ADMIN']}>
+              <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
                 <Dashboard />
               </ProtectedRoute>}
           />
           <Route
             path="/dashboard/equipment/new"
             element={
-              <ProtectedRoute allowedRoles={['CARETAKER', 'ADMIN']}>
+              <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
                 <AddEquipmentType />
               </ProtectedRoute>}
           />

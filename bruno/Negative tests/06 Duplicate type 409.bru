@@ -1,0 +1,33 @@
+meta {
+  name: Duplicate equipment type - 409
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/equipment
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Bruno Test Equipment",
+    "category": "Other Equipment"
+  }
+}
+
+tests {
+  test("Returns HTTP 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}
+
+docs {
+Requires CARETAKER/ADMIN and assumes Equipment / Create equipment type successfully created Bruno Test Equipment earlier. Otherwise expect 201.
+}

@@ -1,0 +1,21 @@
+meta {
+  name: List equipment types
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/equipment
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Returns HTTP 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

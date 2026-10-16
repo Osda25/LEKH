@@ -1,0 +1,21 @@
+meta {
+  name: Me without token - 401
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/auth/me
+  body: none
+  auth: none
+}
+
+tests {
+  test("Returns HTTP 401", function () {
+    expect(res.status).to.equal(401);
+  });
+}
+
+docs {
+Intentionally omits Authorization header to verify requireAuth blocks unauthenticated access.
+}
