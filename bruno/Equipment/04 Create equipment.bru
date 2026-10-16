@@ -1,0 +1,43 @@
+meta {
+  name: Create equipment type
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/equipment
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "name": "Bruno Test Equipment",
+    "category": "Other Equipment",
+    "description": "Created from Bruno for local API testing."
+  }
+}
+
+script:post-response {
+  if (res.status === 201) {
+    const data = res.getBody();
+    if (data && data.data && data.data.id) {
+      bru.setVar('equipmentId', data.data.id);
+    }
+  }
+}
+
+tests {
+  test("Returns HTTP 201", function () {
+    expect(res.status).to.equal(201);
+  });
+}
+
+docs {
+Requires CARETAKER or ADMIN role. Unique name: rerunning unchanged returns 409. Category must match a category in GET /api/equipment/categories.
+}

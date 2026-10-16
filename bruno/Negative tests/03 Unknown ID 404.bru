@@ -1,0 +1,21 @@
+meta {
+  name: Unknown equipment ID - 404
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/equipment/999999999
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Returns HTTP 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}
