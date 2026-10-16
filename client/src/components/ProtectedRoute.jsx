@@ -35,7 +35,7 @@ function ProtectedRoute({ children, allowedRoles }) {
     }
 
     checkAuthentication()
-  },[token])
+  },[token, allowedRoles])
 
   if (!token) {
     return <Navigate to="/login" replace state={{ message: 'Please log in to continue.' }} />
