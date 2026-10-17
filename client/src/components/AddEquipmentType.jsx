@@ -23,6 +23,7 @@ export default function AddEquipmentType() {
 
     const equipmentData = {
       name: formData.get('name').trim(),
+      code: formData.get('code').trim(),
       category: formData.get('category').trim(),
       description: formData.get('description').trim()
     }
@@ -31,6 +32,7 @@ export default function AddEquipmentType() {
 
     if (
       !equipmentData.name ||
+      !equipmentData.code ||
       !equipmentData.category
     ) {
       setError('Please complete all mandatory fields with valid input.')
@@ -115,6 +117,20 @@ export default function AddEquipmentType() {
                 className={inputClasses}
                 type="text"
                 name="name"
+                required
+              />
+            </label>
+
+            <label className="flex flex-col gap-2 text-sm font-medium">
+              Code
+              <input
+                className={inputClasses}
+                type="text"
+                name="code"
+                minLength={3}
+                maxLength={3}
+                pattern="[A-Za-z]{3}"
+                placeholder="Enter exactly three letters, e.g. OSC"
                 required
               />
             </label>

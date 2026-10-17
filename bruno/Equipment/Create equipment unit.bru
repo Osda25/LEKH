@@ -1,0 +1,41 @@
+meta {
+  name: Create equipment unit
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/equipment/{{equipmentId}}/units
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "location": "Lab A, Shelf 2",
+    "condition": "IN_SERVICE"
+  }
+}
+
+tests {
+  test("Returns HTTP 201", function () {
+    expect(res.status).to.equal(201)
+  })
+  
+  test("Generates a unit identifier", function () {
+    const body = res.getBody()
+  
+    expect(body.data.identifier).to.match(/^[A-Z]{3}-\d{3,}$/)
+  })
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
