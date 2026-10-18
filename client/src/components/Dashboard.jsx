@@ -28,7 +28,7 @@ export default function Dashboard() {
             title="Equipment"
             description="Types, units and condition"
             icon={Boxes}
-            to="/dashboard/equipment/new"
+            to="/dashboard/equipment"
           />
 
           <DashboardCard

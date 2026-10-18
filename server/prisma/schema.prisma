@@ -39,6 +39,8 @@ model EquipmentType {
   name        String           @unique
   category    String
   description String?
+  code        String           @unique          
+
   units       EquipmentUnit[]
   guides      EquipmentGuide[]
 }
