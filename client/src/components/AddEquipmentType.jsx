@@ -91,7 +91,7 @@ export default function AddEquipmentType() {
           <Logo />
 
           <Link
-            to="/dashboard"
+            to="/dashboard/equipment"
             className="mb-6 mt-6 inline-flex min-h-11 items-center gap-2 rounded text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
           >
             <span aria-hidden="true">←</span>

@@ -18,6 +18,7 @@ router.get('/', requireAuth, async (request, response) => {
       select: {
         id: true,
         name: true,
+        category: true,
         description: true,
         units: {
           select: {
@@ -39,6 +40,7 @@ router.get('/', requireAuth, async (request, response) => {
       return {
         id: type.id,
         name: type.name,
+        category: type.category,
         description: type.description,
         available: availableType
       }
@@ -54,6 +56,10 @@ router.get('/', requireAuth, async (request, response) => {
 
 router.get('/categories', requireAuth, (request, response) => {
   return response.status(200).json(equipmentCategories)
+})
+
+router.get('/conditions', requireAuth, (request, response) => {
+  return response.status(200).json(Object.values(UnitCondition))
 })
 
 router.get('/:id', requireAuth, async (request, response) => {

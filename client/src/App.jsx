@@ -11,6 +11,9 @@ import EquipmentDetails from './components/EquipmentDetails.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AddEquipmentType from './components/AddEquipmentType.jsx'
+import ManageEquipment from './components/ManageEquipment.jsx'
+import ManageEquipmentDetails from './components/ManageEquipmentDetails.jsx'
+import AddEquipmentUnit from './components/AddEquipmentUnit.jsx'
 
 const MANAGEMENT_ROLES = ['CARETAKER', 'ADMIN']
 
@@ -47,10 +50,31 @@ export default function App() {
               </ProtectedRoute>}
           />
           <Route
+            path="/dashboard/equipment"
+            element={
+              <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
+                <ManageEquipment />
+              </ProtectedRoute>}
+          />
+          <Route
+            path="/dashboard/equipment/:id"
+            element={
+              <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
+                <ManageEquipmentDetails />
+              </ProtectedRoute>}
+          />
+          <Route
             path="/dashboard/equipment/new"
             element={
               <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
                 <AddEquipmentType />
+              </ProtectedRoute>}
+          />
+          <Route
+            path="/dashboard/equipment/:id/units/new"
+            element={
+              <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
+                <AddEquipmentUnit />
               </ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to="/equipment" replace />} />
