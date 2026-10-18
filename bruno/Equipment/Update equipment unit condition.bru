@@ -1,0 +1,28 @@
+meta {
+  name: Update equipment unit condition
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/equipment/{{equipmentId}}/units/{{unitId}}/condition
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "condition": "OUT_OF_SERVICE"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

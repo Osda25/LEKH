@@ -333,4 +333,90 @@ router.post('/:id/units', requireAuth, requireRole('CARETAKER', 'ADMIN'), async 
   }
 })
 
+router.patch('/:id/units/:unitId/condition', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Request body is required.'
+    })
+  }
+
+  const equipmentTypeId = Number(request.params.id)
+  const equipmentUnitId = Number(request.params.unitId)
+
+  if (
+    !Number.isSafeInteger(equipmentTypeId) || 
+    !Number.isSafeInteger(equipmentUnitId) || 
+    equipmentTypeId <= 0 || 
+    equipmentUnitId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid equipment type or unit ID.'
+    })
+  }
+
+  const condition = request.body.condition
+
+  if (
+    typeof condition !== 'string'
+  ) {
+    return response.status(400).json({
+      error: 'Condition must be provided as text.'
+    })
+  }
+
+  const normalizedCondition = condition.trim()
+
+  if (
+    !normalizedCondition
+  ) {
+    return response.status(400).json({
+      error: 'Condition is required.'
+    })
+  }
+
+  if (!Object.values(UnitCondition).includes(normalizedCondition)) {
+    return response.status(400).json({
+      error: 'Enter a valid condition.'
+    })
+  }
+
+  try {
+    const equipmentUnit = await prisma.equipmentUnit.update({
+      where: {
+        id: equipmentUnitId,
+        equipmentTypeId: equipmentTypeId
+      },
+      data: {
+        condition: normalizedCondition
+      },
+      select: {
+        id: true,
+        identifier: true,
+        location: true,
+        condition: true
+      }
+    })
+
+    return response.status(200).json({
+      message: 'Equipment unit successfully updated.',
+      data: equipmentUnit
+    })
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return response.status(404).json({
+        error: 'Equipment unit not found.'
+      })
+    }
+
+    console.error('Equipment unit update failed:', {
+      name: error.name,
+      code: error.code
+    })
+
+    return response.status(500).json({
+      error: 'Equipment unit could not be updated.'
+    })
+  }
+})
+
 export default router
