@@ -2,7 +2,7 @@ import { Link, useParams, useLocation } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
 import Logo from './Logo'
-import EquipmentUnitCard from './EquipmentUnitCard'
+import ManageEquipmentUnitCard from './ManageEquipmentUnitCard'
 import EquipmentGuideCard from './EquipmentGuideCard'
 
 export default function ManageEquipmentDetails() {
@@ -10,15 +10,15 @@ export default function ManageEquipmentDetails() {
   const location = useLocation()
   const [equipmentType, setEquipmentType] = useState()
   const [error, setError] = useState('')
-
+  const [conditions, setConditions] = useState([])
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     async function loadEquipmentType() {
-      setError('')
-      setEquipmentType(undefined)
       try {
         const result = await apiFetch(`/api/equipment/${id}`)
         setEquipmentType(result)
+        setError('')
       } catch (error) {
         setError(
           error.status
@@ -27,8 +27,26 @@ export default function ManageEquipmentDetails() {
         )
       }
     }
+
     loadEquipmentType()
-  }, [id])
+  }, [id, refreshKey])
+
+  useEffect(() => {
+    async function getConditions() {
+      try {
+        const result = await apiFetch('/api/equipment/conditions')
+        setConditions(result)
+      } catch (error) {
+        setError(
+          error.status
+            ? error.message
+            : 'Equipment conditions could not be loaded. Please try again.'
+        )
+      }
+    }
+
+    getConditions()
+  }, [])
 
   function renderUnits() {
     if (equipmentType.units.length === 0) {
@@ -36,9 +54,11 @@ export default function ManageEquipmentDetails() {
     }
 
     return equipmentType.units.map((equipmentUnit) => (
-      <EquipmentUnitCard
+      <ManageEquipmentUnitCard
         key={equipmentUnit.id}
         equipmentUnit={equipmentUnit}
+        onUpdated={() => setRefreshKey((previous) => previous + 1)}
+        conditions={conditions}
       />
     ));
   }
