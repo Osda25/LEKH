@@ -84,7 +84,18 @@ router.get('/:id', requireAuth, async (request, response) => {
             id: true,
             identifier: true,
             location: true,
-            condition: true
+            condition: true,
+            faultReports: {
+              orderBy: {
+                createdAt: 'desc'
+              },
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                createdAt: true
+              }
+            }
           }
         },
         guides: {
@@ -415,6 +426,104 @@ router.patch('/:id/units/:unitId/condition', requireAuth, requireRole('CARETAKER
 
     return response.status(500).json({
       error: 'Equipment unit could not be updated.'
+    })
+  }
+})
+
+router.post('/:id/units/:unitId/faults', requireAuth, async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Request body is required.'
+    })
+  }
+
+  const { title, description } = request.body
+
+  const equipmentTypeId = Number(request.params.id)
+  const equipmentUnitId = Number(request.params.unitId)
+  const userId = Number(request.auth.userId)
+
+  if (
+    !Number.isSafeInteger(equipmentTypeId) || 
+    !Number.isSafeInteger(equipmentUnitId) || 
+    !Number.isSafeInteger(userId) ||
+    equipmentTypeId <= 0 || 
+    equipmentUnitId <= 0 ||
+    userId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid equipment type, unit or user ID.'
+    })
+  }
+
+  if (
+    typeof title !== 'string' ||
+    typeof description !== 'string'
+  ) {
+    return response.status(400).json({
+      error: 'Title and description must be provided as text.'
+    })
+  }
+
+  const normalizedTitle = title.trim()
+  const normalizedDescription = description.trim()
+
+  if (
+    !normalizedTitle ||
+    !normalizedDescription
+  ) {
+    return response.status(400).json({
+      error: 'Title and description are required.'
+    })
+  }
+
+  try {
+    const equipmentUnit = await prisma.equipmentUnit.findFirst({
+      where: {
+        id: equipmentUnitId,
+        equipmentTypeId: equipmentTypeId
+      },
+      select: {
+        id: true
+      }
+    })
+
+    if (!equipmentUnit) {
+      return response.status(404).json({
+        error: 'Equipment unit not found.'
+      })
+    }
+
+    const faultReport = await prisma.faultReport.create({
+      data: {
+        title: normalizedTitle,
+        description: normalizedDescription,
+        equipmentUnitId: equipmentUnitId,
+        reportedById: userId
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        equipmentUnitId: true,
+        reportedById: true
+
+      }
+    })
+
+    return response.status(201).json({
+      message: 'Fault report successfully created.',
+      data: faultReport
+    })
+  } catch (error) {
+    console.error('Fault report creation failed:', {
+      name: error.name,
+      code: error.code
+    })
+
+    return response.status(500).json({
+      error: 'Fault report could not be created.'
     })
   }
 })

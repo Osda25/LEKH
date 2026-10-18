@@ -1,0 +1,29 @@
+meta {
+  name: Report equipment unit fault
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/equipment/{{equipmentId}}/units/{{unitId}}/faults
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "title": "",
+    "description": "The display flickers intermittently when adjusting the voltage."
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
