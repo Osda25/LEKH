@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-export default function FaultReportList({ fault }) {
+export default function ProblemListItem({ item }) {
   const [expanded, setExpanded] = useState(false)
 
-  const formattedDate = new Date(fault.createdAt).toLocaleString('en-GB', {
+  const formattedDate = new Date(item.createdAt).toLocaleString('en-GB', {
     dateStyle: 'medium',
     timeStyle: 'short'
   })
@@ -12,7 +12,7 @@ export default function FaultReportList({ fault }) {
     <li className="min-w-0 rounded-lg border border-field-border bg-white p-3">
       <div className="flex flex-col gap-1">
         <h3 className="font-semibold text-body">
-          {fault.title}
+          {item.title}
         </h3>
 
         <p className="text-xs text-muted">
@@ -33,7 +33,7 @@ export default function FaultReportList({ fault }) {
               : 'truncate'
           }`}
         >
-          {fault.description}
+          {item.description}
         </span>
 
         <span className="mt-2 block text-xs font-semibold text-brand hover:underline">

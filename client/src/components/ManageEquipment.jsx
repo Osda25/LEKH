@@ -52,36 +52,36 @@ export default function ManageEquipment() {
         <header className="mb-8">
           <Logo />
 
+          <Link
+            to="/dashboard"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
+          >
+            <span aria-hidden="true">←</span>
+            Management dashboard
+          </Link>
+
           <h1 className="mt-4 text-2xl font-bold text-center">
             Manage equipment
           </h1>
         </header>
 
-        <Link
-            to="/dashboard"
-            className="mb-6 inline-flex min-h-11 items-center gap-2 rounded text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-        >
-          <span aria-hidden="true">←</span>
-          Management dashboard
-        </Link>
-
         <div className="mt-4">
           <Link
             to="/dashboard/equipment/new"
-            className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             <span aria-hidden="true">+</span>
-            Add equipment type
+            Add new equipment type
           </Link>
         </div>
 
         <div className="mt-8 border-t border-field-border pt-6">
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg font-bold text-center">
             Existing equipment types
           </h2>
 
-          <p className="mt-2 text-sm text-muted">
-            Select an equipment type to manage its units and condition.
+          <p className="mt-2 text-sm text-muted text-center">
+            Select an equipment type to manage its units, condition, known problems or report faults.
           </p>
 
           <ul className="mt-4 flex flex-col gap-4">

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Flag, X } from 'lucide-react'
-import FaultReportList from './FaultReportList.jsx'
+import ProblemListItem from './ProblemListItem.jsx'
 import FaultReportForm from './FaultReportForm.jsx'
 
-export default function EquipmentUnitCard({ equipmentUnit, onUpdated }) {
+export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }) {
   const [openForm, setOpenForm] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
 
@@ -17,6 +17,23 @@ export default function EquipmentUnitCard({ equipmentUnit, onUpdated }) {
       ? 'Available'
       : 'Unavailable'
 
+  function renderKnownProblems() {
+    if (problems.length === 0) {
+      return (
+        <li className="text-sm italic text-muted">
+          No problems reported.
+        </li>
+      )
+    }
+
+    return problems.map((problem) => (
+      <ProblemListItem
+        key={problem.id}
+        item={problem}
+      />
+    ))
+  }
+
   function renderFaultReports() {
     if (equipmentUnit.faultReports.length === 0) {
       return (
@@ -27,9 +44,9 @@ export default function EquipmentUnitCard({ equipmentUnit, onUpdated }) {
     }
 
     return equipmentUnit.faultReports.map((fault) => (
-      <FaultReportList
+      <ProblemListItem
         key={fault.id}
-        fault={fault}
+        item={fault}
       />
     ))
   }
@@ -37,9 +54,9 @@ export default function EquipmentUnitCard({ equipmentUnit, onUpdated }) {
   return (
     <li className="w-full rounded-xl border border-field-border bg-field p-4">
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-bold text-body">
+        <h3 className="text-lg font-bold text-body">
           {equipmentUnit.identifier}
-        </h2>
+        </h3>
 
         <span
           className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium ${
@@ -64,6 +81,16 @@ export default function EquipmentUnitCard({ equipmentUnit, onUpdated }) {
           </h3>
 
           <p>{conditionText}</p>
+        </div>
+
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-muted">
+            Known problems
+          </h3>
+
+          <ul className="flex flex-col gap-2">
+            {renderKnownProblems()}
+          </ul>
         </div>
 
         <div>

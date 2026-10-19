@@ -1,24 +1,27 @@
 import { Link, useParams, useLocation } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
+import { Flag, X } from 'lucide-react'
 import Logo from './Logo'
-import ManageEquipmentUnitCard from './ManageEquipmentUnitCard'
-import EquipmentGuideCard from './EquipmentGuideCard'
+import ManageEquipmentUnitCard from './ManageEquipmentUnitCard.jsx'
+import EquipmentGuideCard from './EquipmentGuideCard.jsx'
+import KnownProblemForm from './KnownProblemForm.jsx'
+import ProblemListItem from './ProblemListItem.jsx'
 
 export default function ManageEquipmentDetails() {
   const { id } = useParams()
   const location = useLocation()
   const [equipmentType, setEquipmentType] = useState()
   const [error, setError] = useState('')
+  const [successProblemMessage, setSuccessProblemMessage] = useState('')
   const [conditions, setConditions] = useState([])
   const [refreshKey, setRefreshKey] = useState(0)
+  const [openForm, setOpenForm] = useState(false)
 
   useEffect(() => {
     async function loadEquipmentType() {
       try {
         const result = await apiFetch(`/api/equipment/${id}`)
-
-        console.log('Equipment loaded:', result.units)
 
         setEquipmentType(result)
         setError('')
@@ -51,6 +54,23 @@ export default function ManageEquipmentDetails() {
     getConditions()
   }, [])
 
+  function renderKnownProblems() {
+    if (equipmentType.problems.length === 0) {
+      return (
+        <li className="text-sm italic text-muted">
+          No problems reported.
+        </li>
+      )
+    }
+
+    return equipmentType.problems.map((problem) => (
+      <ProblemListItem
+        key={problem.id}
+        item={problem}
+      />
+    ))
+  }
+
   function renderUnits() {
     if (equipmentType.units.length === 0) {
       return <li className="mt-4 p-4 w-full rounded-xl border border-field-border bg-field">No equipment units to show.</li>;
@@ -60,6 +80,7 @@ export default function ManageEquipmentDetails() {
       <ManageEquipmentUnitCard
         key={equipmentUnit.id}
         equipmentUnit={equipmentUnit}
+        problems={equipmentType.problems}
         onUpdated={() => setRefreshKey((previous) => previous + 1)}
         conditions={conditions}
       />
@@ -99,7 +120,7 @@ export default function ManageEquipmentDetails() {
           Manage Equipment
         </Link>
 
-        <div className="mt-8 border-t border-field-border pt-6">
+        <div className="mt-2 border-t border-field-border pt-6">
           <div className="flex flex-col gap-4">
             {error ? (
               <p role="alert">{error}</p>
@@ -122,36 +143,100 @@ export default function ManageEquipmentDetails() {
                   {equipmentType.description?.trim() || 'No description available.'}
                 </p>
 
-                <div className="mt-4">
-                  <Link
-                    to={`/dashboard/equipment/${id}/units/new`}
-                    className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                  >
-                    <span aria-hidden="true">+</span>
-                    Add equipment unit
-                  </Link>
+                <div className="mt-2 border-t border-field-border pt-6">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="mt-2 text-lg font-bold text-center">
+                      Known problems
+                    </h2>
+
+                    <ul className="flex flex-col gap-2">
+                      {renderKnownProblems()}
+                    </ul>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenForm((previous) => !previous)
+                        setSuccessProblemMessage('')
+                      }}
+                      aria-expanded={openForm}
+                      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
+                        openForm
+                          ? 'border-field-border bg-white text-body hover:bg-field'
+                          : 'border-brand bg-brand text-white hover:bg-brand-hover'
+                      }`}
+                    >
+                      {openForm ? (
+                        <X size={18} aria-hidden="true" />
+                      ) : (
+                        <Flag size={18} aria-hidden="true" />
+                      )}
+
+                      {openForm ? 'Cancel' : 'Add known problem'}
+                    </button>
+
+                    {openForm && (
+                      <KnownProblemForm
+                        onSuccess={() => {
+                          setOpenForm(false)
+                          setSuccessProblemMessage('Known problem created.')
+                          setRefreshKey((previous) => previous + 1)
+                        }}
+                      />
+                      )}
+            
+                    {successProblemMessage && (
+                      <p
+                        role="status"
+                        className="rounded-lg bg-success-bg p-3 text-sm text-success"
+                      >
+                        {successProblemMessage}
+                      </p>
+                    )}
+
+                  </div>
                 </div>
 
-                <h2 className="mt-4 text-lg font-bold text-center">
-                  Equipment units
-                </h2>
-                
-                <ul className="flex flex-col gap-4">{renderUnits()}</ul>
+                <div className="mt-2 border-t border-field-border pt-6">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="mt-2 text-lg font-bold text-center">
+                      Equipment units
+                    </h2>
 
-                <h2 className="mt-4 text-lg font-bold text-center">
-                  Guides
-                </h2>
+                    <ul className="flex flex-col gap-4">
+                      {renderUnits()}
+                    </ul>
+                    
+                    <div className="mt-4">
+                      <Link
+                        to={`/dashboard/equipment/${id}/units/new`}
+                        className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      >
+                        <span aria-hidden="true">+</span>
+                        Add new equipment unit
+                      </Link>
+                    </div>
 
-                <ul className="flex flex-col gap-4">
-                  {renderGuides()}
-                </ul>
+                  </div>
+                </div>
+
+                <div className="mt-2 border-t border-field-border pt-6">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="mt-4 text-lg font-bold text-center">
+                      Guides
+                    </h2>
+
+                    <ul className="flex flex-col gap-4">
+                      {renderGuides()}
+                    </ul>
+                  </div>
+                </div>
               </>
             ) : (
               <p>Loading equipment details...</p>
             )}
           </div>
         </div>
-
       </div>
     </section>
   )

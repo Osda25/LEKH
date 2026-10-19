@@ -39,6 +39,7 @@ export default function EquipmentDetails() {
       <EquipmentUnitCard
         key={equipmentUnit.id}
         equipmentUnit={equipmentUnit}
+        problems={equipmentType.problems}
         onUpdated={() => setRefreshKey((previous) => previous + 1)}
       />
     ));
@@ -77,46 +78,55 @@ export default function EquipmentDetails() {
             Equipment
           </Link>
 
-          <div className="flex flex-col gap-4">
-            {error ? (
-              <p role="alert">{error}</p>
-            ) : equipmentType ? (
-              <>
-                {location.state?.message && (
-                  <p
-                    role="status"
-                    className="rounded-lg bg-success-bg p-3 text-sm text-success"
-                  >
-                    {location.state.message}
+          <div className="mt-2 border-t border-field-border pt-6">
+            <div className="flex flex-col gap-4">
+              {error ? (
+                <p role="alert">{error}</p>
+              ) : equipmentType ? (
+                <>
+                  {location.state?.message && (
+                    <p
+                      role="status"
+                      className="rounded-lg bg-success-bg p-3 text-sm text-success"
+                    >
+                      {location.state.message}
+                    </p>
+                  )}
+                  <h2 className="m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
+                  <h3 className="text-xl italic">{equipmentType.category?.trim() || 'Unknown category.'}</h3>
+                  <p>
+                    {equipmentType.description?.trim() || 'No description available.'}
                   </p>
-                )}
-                <h2 className="m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
-                <h3 className="text-xl italic">{equipmentType.category?.trim() || 'Unknown category.'}</h3>
-                <p>
-                  {equipmentType.description?.trim() || 'No description available.'}
-                </p>
 
-                <h2 className="mt-4 text-lg font-bold text-center">
-                  Equipment units
-                </h2>
+                  <div className="mt-2 border-t border-field-border pt-6">
+                    <div className="flex flex-col gap-4">
+                      <h2 className="mt-4 text-lg font-bold text-center">
+                        Equipment units
+                      </h2>
 
-                <ul className="flex flex-col gap-4">
-                  {renderUnits()}
-                </ul>
+                      <ul className="flex flex-col gap-4">
+                        {renderUnits()}
+                      </ul>
+                    </div>
+                  </div>
 
-                <h2 className="mt-4 text-lg font-bold text-center">
-                  Guides
-                </h2>
+                  <div className="mt-2 border-t border-field-border pt-6">
+                    <div className="flex flex-col gap-4">
+                      <h2 className="mt-4 text-lg font-bold text-center">
+                        Guides
+                      </h2>
 
-                <ul className="flex flex-col gap-4">
-                  {renderGuides()}
-                </ul>
-              </>
-            ) : (
-              <p>Loading equipment details...</p>
-            )}
+                      <ul className="flex flex-col gap-4">
+                        {renderGuides()}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p>Loading equipment details...</p>
+              )}
+            </div>
           </div>
-
         </div>
       </section>
     )
