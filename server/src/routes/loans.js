@@ -172,4 +172,91 @@ router.post('/', requireAuth, async (request, response) => {
   }
 })
 
+router.get('/booked-periods/:unitId', requireAuth, async (request, response) => {
+  const equipmentUnitId = Number(request.params.unitId)
+
+  if (
+    !Number.isSafeInteger(equipmentUnitId) || 
+    equipmentUnitId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid unit ID.'
+    })
+  }
+
+  try {
+    const equipmentUnit = await prisma.equipmentUnit.findUnique({
+      where: {
+        id: equipmentUnitId
+      },
+      select: {
+        id: true,
+        loans: {
+          where: {
+            status: {
+              in: ['APPROVED', 'ACTIVE', 'RETURN_REQUESTED']
+            }
+          },
+          orderBy: {
+            startDate: 'asc'
+          },
+          select: {
+            status: true,
+            startDate: true,
+            endDate: true
+          }
+        }
+      }
+    })
+
+    if (!equipmentUnit) {
+      return response.status(404).json({
+        error: 'Equipment unit not found.'
+      })
+    }
+
+    const today = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Europe/Stockholm',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date())
+
+    let hasOverdueLoan = false
+
+    const bookedPeriods = equipmentUnit.loans.map((loan) => {
+      const startDate = loan.startDate.toISOString().slice(0, 10)
+      const endDate = loan.endDate.toISOString().slice(0, 10)
+
+      if (
+        loan.status !== 'APPROVED' &&
+        endDate < today
+      ) {
+        hasOverdueLoan = true
+      }
+
+      return {
+        startDate,
+        endDate
+      }
+    })
+
+    return response.status(200).json({
+      bookedPeriods, 
+      hasOverdueLoan
+    })
+  } catch (error) {
+    console.error('Failed to load booking periods:', {
+      name: error.name,
+      code: error.code,
+      message: error.message
+    })
+
+    return response.status(500).json({
+      error: 'Booking periods could not be retrieved.'
+    })
+  }
+      
+})
+
 export default router
