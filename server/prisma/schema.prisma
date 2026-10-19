@@ -32,6 +32,7 @@ model User {
   phone        String
   passwordHash String
   role         Role   @default(USER)
+  faultReports FaultReport[]
 }
 
 model EquipmentType {
@@ -46,10 +47,11 @@ model EquipmentType {
 }
 
 model EquipmentUnit {
-  id         Int           @id @default(autoincrement())
-  identifier String        @unique
-  location   String
-  condition  UnitCondition @default(IN_SERVICE)
+  id            Int           @id @default(autoincrement())
+  identifier    String        @unique
+  location      String
+  condition     UnitCondition @default(IN_SERVICE)
+  faultReports  FaultReport[]
 
   equipmentTypeId Int
   equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
@@ -63,4 +65,17 @@ model EquipmentGuide {
 
   equipmentTypeId Int
   equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
+}
+
+model FaultReport {
+  id              Int     @id @default(autoincrement())
+  title           String
+  description     String
+  createdAt       DateTime @default(now())
+
+  equipmentUnitId Int
+  equipmentUnit   EquipmentUnit @relation(fields: [equipmentUnitId], references: [id])
+
+  reportedById    Int
+  reportedBy      User  @relation(fields: [reportedById], references: [id])
 }

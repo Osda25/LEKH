@@ -1,11 +1,16 @@
 import { useState } from "react"
 import { useParams } from "react-router"
 import { apiFetch } from "../services/api"
+import { Flag, X } from 'lucide-react'
+import FaultReportList from "./FaultReportList"
+import FaultReportForm from './FaultReportForm.jsx'
 
 export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, conditions }) {
   const [unitCondition, setUnitCondition] = useState(equipmentUnit.condition)
-  const [error, setError] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [openForm, setOpenForm] = useState(false)
+  const [conditionError, setConditionError] = useState('')
+  const [successConditionMessage, setSuccessConditionMessage] = useState('')
+  const [successFaultMessage, setSuccessFaultMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { id } = useParams()
 
@@ -14,7 +19,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
       ? 'Available'
       : 'Unavailable'
 
-  async function handleSubmit(event) {
+  async function handleConditionSubmit(event) {
     event.preventDefault()
 
     if (isSubmitting) {
@@ -25,13 +30,13 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
       condition: unitCondition
     }
 
-    setError('')
-    setSuccessMessage('')
+    setConditionError('')
+    setSuccessConditionMessage('')
 
     if (
       !equipmentUnitData.condition
     ) {
-      setError('Please complete all mandatory fields with valid input.')
+      setConditionError('Please complete all mandatory fields with valid input.')
       return
     }
 
@@ -46,10 +51,10 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
         body: JSON.stringify(equipmentUnitData)
       })
 
-      setSuccessMessage('Unit successfully updated.')
+      setSuccessConditionMessage('Unit successfully updated.')
       onUpdated()
     } catch (error) {
-      setError(
+      setConditionError(
         error.status
           ? error.message
           : 'Equipment unit could not be updated. Please try again.'
@@ -57,6 +62,23 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  function renderFaultReports() {
+    if (equipmentUnit.faultReports.length === 0) {
+      return (
+        <li className="text-sm italic text-muted">
+          No faults reported.
+        </li>
+      )
+    }
+
+    return equipmentUnit.faultReports.map((fault) => (
+      <FaultReportList
+        key={fault.id}
+        fault={fault}
+      />
+    ))
   }
 
   return (
@@ -84,7 +106,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
         </div>
 
         <div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleConditionSubmit}>
             <fieldset
               disabled={isSubmitting}
               className="flex min-w-0 flex-col gap-5"
@@ -97,8 +119,8 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
                   value={unitCondition}
                   onChange={(event) => {
                     setUnitCondition(event.target.value)
-                    setError('')
-                    setSuccessMessage('')
+                    setConditionError('')
+                    setSuccessConditionMessage('')
                   }}
                   required
                 >
@@ -114,21 +136,21 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
                 </select>
               </label>
 
-              {error && (
+              {conditionError && (
                 <p
                   role="alert"
                   className="rounded-lg bg-red-50 p-3 text-sm text-red-800"
                 >
-                  {error}
+                  {conditionError}
                 </p>
               )}
 
-              {successMessage && (
+              {successConditionMessage && (
                 <p
                   role="status"
                   className="rounded-lg bg-success-bg p-3 text-sm text-success"
                 >
-                  {successMessage}
+                  {successConditionMessage}
                 </p>
               )}
 
@@ -144,6 +166,60 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
             </fieldset>
           </form>
         </div>
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-muted">
+            Reported faults
+          </h3>
+
+          <ul className="flex flex-col gap-2">
+            {renderFaultReports()}
+          </ul>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => {
+              setOpenForm((previous) => !previous)
+              setSuccessFaultMessage('')
+            }}
+            disabled={isSubmitting}
+            aria-expanded={openForm}
+            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
+              openForm
+                ? 'border-field-border bg-white text-body hover:bg-field'
+                : 'border-brand bg-brand text-white hover:bg-brand-hover'
+            }`}
+          >
+            {openForm ? (
+              <X size={18} aria-hidden="true" />
+            ) : (
+              <Flag size={18} aria-hidden="true" />
+            )}
+
+            {openForm ? 'Cancel' : 'Report a fault'}
+          </button>
+        </div>
+
+        {openForm && (
+          <FaultReportForm
+            equipmentUnit={equipmentUnit}
+            onSuccess={() => {
+              setOpenForm(false)
+              setSuccessFaultMessage('Fault report created.')
+              onUpdated()
+            }}
+          />
+          )}
+
+        {successFaultMessage && (
+          <p
+            role="status"
+            className="rounded-lg bg-success-bg p-3 text-sm text-success"
+          >
+            {successFaultMessage}
+          </p>
+        )}
       </div>
     </li>
   )

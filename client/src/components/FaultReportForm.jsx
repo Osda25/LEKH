@@ -1,0 +1,109 @@
+import { useState } from 'react'
+import { useParams } from 'react-router'
+import { apiFetch } from '../services/api.js'
+
+export default function FaultReportForm({ equipmentUnit, onSuccess }) {
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { id } = useParams()
+
+  const inputClasses =
+    'w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    if (isSubmitting) {
+      return
+    }
+
+    const formData = new FormData(event.currentTarget)
+
+    const equipmentData = {
+      title: formData.get('title').trim(),
+      description: formData.get('description').trim()
+    }
+
+    setError('')
+
+    if (
+      !equipmentData.title ||
+      !equipmentData.description
+    ) {
+      setError('Please complete all mandatory fields with valid input.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await apiFetch(`/api/equipment/${id}/units/${equipmentUnit.id}/faults`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(equipmentData)
+      })
+
+      onSuccess()
+    } catch (error) {
+      setError(
+        error.status
+          ? error.message
+          : 'Fault report could not be created. Please try again.'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <fieldset
+          className="flex min-w-0 flex-col gap-5"
+          disabled={isSubmitting}
+        >
+          <legend className="sr-only">Fault report details</legend>
+
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Title
+            <input
+              className={inputClasses}
+              type="text"
+              name="title"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Description
+            <textarea
+              className={inputClasses}
+              name="description"
+              rows={4}
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="min-h-12 rounded-lg bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
+          >
+            {isSubmitting ? 'Reporting fault...' : 'Report fault'}
+          </button>
+        </fieldset>
+      </form>
+
+      {error && (
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 p-3 text-sm text-red-800"
+        >
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
