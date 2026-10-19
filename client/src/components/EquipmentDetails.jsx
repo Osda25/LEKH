@@ -10,15 +10,14 @@ export default function EquipmentDetails() {
   const location = useLocation()
   const [equipmentType, setEquipmentType] = useState()
   const [error, setError] = useState('')
-
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     async function loadEquipmentType() {
-      setError('')
-      setEquipmentType(undefined)
       try {
         const result = await apiFetch(`/api/equipment/${id}`)
         setEquipmentType(result)
+        setError('')
       } catch (error) {
         setError(
           error.status
@@ -27,8 +26,9 @@ export default function EquipmentDetails() {
         )
       }
     }
+
     loadEquipmentType()
-  }, [id])
+  }, [id, refreshKey])
 
   function renderUnits() {
     if (equipmentType.units.length === 0) {
@@ -39,6 +39,7 @@ export default function EquipmentDetails() {
       <EquipmentUnitCard
         key={equipmentUnit.id}
         equipmentUnit={equipmentUnit}
+        onUpdated={() => setRefreshKey((previous) => previous + 1)}
       />
     ));
   }
@@ -94,7 +95,14 @@ export default function EquipmentDetails() {
                 <p>
                   {equipmentType.description?.trim() || 'No description available.'}
                 </p>
-                <ul className="flex flex-col gap-4">{renderUnits()}</ul>
+
+                <h2 className="mt-4 text-lg font-bold text-center">
+                  Equipment units
+                </h2>
+
+                <ul className="flex flex-col gap-4">
+                  {renderUnits()}
+                </ul>
 
                 <h2 className="mt-4 text-lg font-bold text-center">
                   Guides

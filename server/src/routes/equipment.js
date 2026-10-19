@@ -80,6 +80,9 @@ router.get('/:id', requireAuth, async (request, response) => {
         category: true,
         description: true,
         units: {
+          orderBy: {
+            id: 'asc'
+          },
           select: {
             id: true,
             identifier: true,
