@@ -102,11 +102,25 @@ router.get('/:id', requireAuth, async (request, response) => {
           }
         },
         guides: {
+          orderBy: {
+                id: 'desc'
+              },
           select: {
             id: true,
             title: true,
             content: true,
             url: true
+          }
+        },
+        problems: {
+          orderBy: {
+            createdAt: 'desc'
+          },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            createdAt: true
           }
         }
       }
@@ -222,7 +236,8 @@ router.post('/', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request,
 
     console.error('Equipment type creation failed:', {
       name: error.name,
-      code: error.code
+      code: error.code,
+      message: error.message
     })
 
     return response.status(500).json({
@@ -338,7 +353,8 @@ router.post('/:id/units', requireAuth, requireRole('CARETAKER', 'ADMIN'), async 
 
     console.error('Equipment unit creation failed:', {
       name: error.name,
-      code: error.code
+      code: error.code,
+      message: error.message
     })
 
     return response.status(500).json({
@@ -424,7 +440,8 @@ router.patch('/:id/units/:unitId/condition', requireAuth, requireRole('CARETAKER
 
     console.error('Equipment unit update failed:', {
       name: error.name,
-      code: error.code
+      code: error.code,
+      message: error.message
     })
 
     return response.status(500).json({
@@ -522,11 +539,101 @@ router.post('/:id/units/:unitId/faults', requireAuth, async (request, response) 
   } catch (error) {
     console.error('Fault report creation failed:', {
       name: error.name,
-      code: error.code
+      code: error.code,
+      message: error.message
     })
 
     return response.status(500).json({
       error: 'Fault report could not be created.'
+    })
+  }
+})
+
+router.post('/:id/problems', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Request body is required.'
+    })
+  }
+
+  const { title, description } = request.body
+
+  const equipmentTypeId = Number(request.params.id)
+
+  if (
+    !Number.isSafeInteger(equipmentTypeId) || 
+    equipmentTypeId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid equipment type ID.'
+    })
+  }
+
+  if (
+    typeof title !== 'string' ||
+    typeof description !== 'string'
+  ) {
+    return response.status(400).json({
+      error: 'Title and description must be provided as text.'
+    })
+  }
+
+  const normalizedTitle = title.trim()
+  const normalizedDescription = description.trim()
+
+  if (
+    !normalizedTitle ||
+    !normalizedDescription
+  ) {
+    return response.status(400).json({
+      error: 'Title and description are required.'
+    })
+  }
+
+  try {
+    const equipmentType = await prisma.equipmentType.findUnique({
+      where: {
+        id: equipmentTypeId
+      },
+      select: {
+        id: true
+      }
+    })
+
+    if (!equipmentType) {
+      return response.status(404).json({
+        error: 'Equipment type not found.'
+      })
+    }
+
+    const knownProblem = await prisma.knownProblem.create({
+      data: {
+        title: normalizedTitle,
+        description: normalizedDescription,
+        equipmentTypeId: equipmentTypeId
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        equipmentTypeId: true,
+      }
+    })
+
+    return response.status(201).json({
+      message: 'Known problem successfully created.',
+      data: knownProblem
+    })
+  } catch (error) {
+    console.error(`Known problem creation failed: `, {
+      name: error.name,
+      code: error.code,
+      message: error.message
+    })
+
+    return response.status(500).json({
+      error: 'Known problem could not be created.'
     })
   }
 })

@@ -9,7 +9,7 @@ import Login from './components/Login.jsx'
 import Equipment from './components/Equipment.jsx'
 import EquipmentDetails from './components/EquipmentDetails.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
-import Dashboard from './components/Dashboard.jsx'
+import ManagementDashboard from './components/ManagementDashboard.jsx'
 import AddEquipmentType from './components/AddEquipmentType.jsx'
 import ManageEquipment from './components/ManageEquipment.jsx'
 import ManageEquipmentDetails from './components/ManageEquipmentDetails.jsx'
@@ -46,7 +46,7 @@ export default function App() {
             path="/dashboard"
             element={
               <ProtectedRoute allowedRoles={MANAGEMENT_ROLES}>
-                <Dashboard />
+                <ManagementDashboard />
               </ProtectedRoute>}
           />
           <Route

@@ -2,10 +2,10 @@ import { useState } from "react"
 import { useParams } from "react-router"
 import { apiFetch } from "../services/api"
 import { Flag, X } from 'lucide-react'
-import FaultReportList from "./FaultReportList"
+import ProblemListItem from "./ProblemListItem.jsx"
 import FaultReportForm from './FaultReportForm.jsx'
 
-export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, conditions }) {
+export default function ManageEquipmentUnitCard({ equipmentUnit, problems, onUpdated, conditions }) {
   const [unitCondition, setUnitCondition] = useState(equipmentUnit.condition)
   const [openForm, setOpenForm] = useState(false)
   const [conditionError, setConditionError] = useState('')
@@ -64,6 +64,23 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
     }
   }
 
+  function renderKnownProblems() {
+    if (problems.length === 0) {
+      return (
+        <li className="text-sm italic text-muted">
+          No problems reported.
+        </li>
+      )
+    }
+
+    return problems.map((problem) => (
+      <ProblemListItem
+        key={problem.id}
+        item={problem}
+      />
+    ))
+  }
+
   function renderFaultReports() {
     if (equipmentUnit.faultReports.length === 0) {
       return (
@@ -74,9 +91,9 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
     }
 
     return equipmentUnit.faultReports.map((fault) => (
-      <FaultReportList
+      <ProblemListItem
         key={fault.id}
-        fault={fault}
+        item={fault}
       />
     ))
   }
@@ -84,9 +101,9 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
   return (
     <li className="w-full rounded-xl border border-field-border bg-field p-4">
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-bold text-body">
+        <h3 className="text-lg font-bold text-body">
           {equipmentUnit.identifier}
-        </h2>
+        </h3>
 
         <span
           className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium ${
@@ -158,7 +175,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
                 <button
                   type="submit"
                   disabled={isSubmitting || equipmentUnit.condition === unitCondition}
-                  className="min-h-12 max-w-24 rounded-lg bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
+                  className="min-h-12 max-w-24 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
                 >
                   {isSubmitting ? 'Saving...' : 'Save'}
                 </button>
@@ -166,6 +183,17 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
             </fieldset>
           </form>
         </div>
+
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-muted">
+            Known problems
+          </h3>
+
+          <ul className="flex flex-col gap-2">
+            {renderKnownProblems()}
+          </ul>
+        </div>
+
         <div>
           <h3 className="mb-2 text-sm font-medium text-muted">
             Reported faults
@@ -185,7 +213,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
             }}
             disabled={isSubmitting}
             aria-expanded={openForm}
-            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
+            className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
               openForm
                 ? 'border-field-border bg-white text-body hover:bg-field'
                 : 'border-brand bg-brand text-white hover:bg-brand-hover'
@@ -197,7 +225,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, onUpdated, cond
               <Flag size={18} aria-hidden="true" />
             )}
 
-            {openForm ? 'Cancel' : 'Report a fault'}
+            {openForm ? 'Cancel' : 'Report a unit fault'}
           </button>
         </div>
 

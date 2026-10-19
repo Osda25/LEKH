@@ -7,7 +7,7 @@ import {
   Wrench
 } from 'lucide-react'
 
-export default function Dashboard() {
+export default function ManagementDashboard() {
   return (
     <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
       <div className="w-full max-w-3xl rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">

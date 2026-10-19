@@ -152,7 +152,7 @@ export default function AddEquipmentUnit() {
             <button
               type="submit"
               disabled={isSubmitting || conditions.length === 0}
-              className="min-h-12 rounded-lg bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
+              className="min-h-12 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
             >
               {isSubmitting ? 'Adding equipment unit...' : 'Add equipment unit'}
             </button>

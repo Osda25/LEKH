@@ -44,6 +44,7 @@ model EquipmentType {
 
   units       EquipmentUnit[]
   guides      EquipmentGuide[]
+  problems    KnownProblem[]
 }
 
 model EquipmentUnit {
@@ -78,4 +79,15 @@ model FaultReport {
 
   reportedById    Int
   reportedBy      User  @relation(fields: [reportedById], references: [id])
+}
+
+model KnownProblem {
+  id              Int     @id @default(autoincrement())
+  title           String
+  description     String
+  createdAt       DateTime @default(now())
+
+  equipmentTypeId Int
+  equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
+
 }
