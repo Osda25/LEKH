@@ -25,34 +25,45 @@ enum UnitCondition {
   OUT_OF_SERVICE
 }
 
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ACTIVE
+  RETURN_REQUESTED
+  RETURNED
+}
+
 model User {
-  id           Int    @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   name         String
-  email        String @unique
+  email        String        @unique
   phone        String
   passwordHash String
-  role         Role   @default(USER)
+  role         Role          @default(USER)
   faultReports FaultReport[]
+  loans        Loan[]
 }
 
 model EquipmentType {
-  id          Int              @id @default(autoincrement())
-  name        String           @unique
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
   category    String
   description String?
-  code        String           @unique          
+  code        String  @unique
 
-  units       EquipmentUnit[]
-  guides      EquipmentGuide[]
-  problems    KnownProblem[]
+  units    EquipmentUnit[]
+  guides   EquipmentGuide[]
+  problems KnownProblem[]
 }
 
 model EquipmentUnit {
-  id            Int           @id @default(autoincrement())
-  identifier    String        @unique
-  location      String
-  condition     UnitCondition @default(IN_SERVICE)
-  faultReports  FaultReport[]
+  id           Int           @id @default(autoincrement())
+  identifier   String        @unique
+  location     String
+  condition    UnitCondition @default(IN_SERVICE)
+  faultReports FaultReport[]
+  loans        Loan[]
 
   equipmentTypeId Int
   equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
@@ -69,25 +80,40 @@ model EquipmentGuide {
 }
 
 model FaultReport {
-  id              Int     @id @default(autoincrement())
-  title           String
-  description     String
-  createdAt       DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  createdAt   DateTime @default(now())
 
   equipmentUnitId Int
   equipmentUnit   EquipmentUnit @relation(fields: [equipmentUnitId], references: [id])
 
-  reportedById    Int
-  reportedBy      User  @relation(fields: [reportedById], references: [id])
+  reportedById Int
+  reportedBy   User @relation(fields: [reportedById], references: [id])
 }
 
 model KnownProblem {
-  id              Int     @id @default(autoincrement())
-  title           String
-  description     String
-  createdAt       DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  createdAt   DateTime @default(now())
 
   equipmentTypeId Int
   equipmentType   EquipmentType @relation(fields: [equipmentTypeId], references: [id])
+}
 
+model Loan {
+  id           Int        @id @default(autoincrement())
+  status       LoanStatus @default(PENDING)
+  startDate    DateTime   @db.Date
+  endDate      DateTime   @db.Date
+  createdAt    DateTime   @default(now())
+  approvedAt   DateTime?
+  checkedOutAt DateTime?
+  returnedAt   DateTime?
+
+  equipmentUnitId Int
+  equipmentUnit   EquipmentUnit @relation(fields: [equipmentUnitId], references: [id])
+  userId          Int
+  user            User          @relation(fields: [userId], references: [id])
 }
