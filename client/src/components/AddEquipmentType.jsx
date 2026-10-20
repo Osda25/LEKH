@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { apiFetch } from '../services/api.js'
 import Logo from './Logo.jsx'
+import { inputClasses } from '../styles/formClasses.js'
 
 export default function AddEquipmentType() {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const [categories, setCategories] = useState([])
-
-  const inputClasses =
-    'w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -114,7 +112,7 @@ export default function AddEquipmentType() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Name
               <input
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 type="text"
                 name="name"
                 required
@@ -124,7 +122,7 @@ export default function AddEquipmentType() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Code
               <input
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 type="text"
                 name="code"
                 minLength={3}
@@ -138,7 +136,7 @@ export default function AddEquipmentType() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Category
               <select
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 name="category"
                 defaultValue=""
                 required
@@ -158,7 +156,7 @@ export default function AddEquipmentType() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Description
               <textarea
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 name="description"
                 rows={4}
               />

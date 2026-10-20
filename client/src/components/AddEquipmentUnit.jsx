@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { apiFetch } from '../services/api.js'
 import Logo from './Logo.jsx'
+import { inputClasses } from '../styles/formClasses.js'
 
 export default function AddEquipmentUnit() {
   const { id } = useParams()
@@ -9,9 +10,6 @@ export default function AddEquipmentUnit() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const [conditions, setConditions] = useState([])
-
-  const inputClasses =
-    'w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -112,7 +110,7 @@ export default function AddEquipmentUnit() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Location
               <input
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 type="text"
                 name="location"
                 placeholder="Ex. 'Lab 2 Shelf 14A'"
@@ -123,7 +121,7 @@ export default function AddEquipmentUnit() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Condition
               <select
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 name="condition"
                 defaultValue="IN_SERVICE"
                 required
