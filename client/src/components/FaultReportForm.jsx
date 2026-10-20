@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { apiFetch } from '../services/api.js'
+import { inputClasses } from '../styles/formClasses.js'
 
 export default function FaultReportForm({ equipmentUnit, onSuccess }) {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { id } = useParams()
-
-  const inputClasses =
-    'w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -69,7 +67,7 @@ export default function FaultReportForm({ equipmentUnit, onSuccess }) {
           <label className="flex flex-col gap-2 text-sm font-medium">
             Title
             <input
-              className={inputClasses}
+              className={`${inputClasses} bg-white`}
               type="text"
               name="title"
               required
@@ -79,7 +77,7 @@ export default function FaultReportForm({ equipmentUnit, onSuccess }) {
           <label className="flex flex-col gap-2 text-sm font-medium">
             Description
             <textarea
-              className={inputClasses}
+              className={`${inputClasses} bg-white`}
               name="description"
               rows={4}
               required

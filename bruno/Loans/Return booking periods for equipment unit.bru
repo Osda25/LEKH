@@ -1,0 +1,22 @@
+meta {
+  name: Return booking periods for equipment unit
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/loans/booked-periods/{{unitId}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

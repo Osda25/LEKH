@@ -131,7 +131,7 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, problems, onUpd
               <label className="flex flex-col gap-2 text-sm font-medium text-muted">
                 Condition
                 <select
-                  className='w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
+                  className='w-full rounded-lg border border-field-border bg-white px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
                   name="condition"
                   value={unitCondition}
                   onChange={(event) => {

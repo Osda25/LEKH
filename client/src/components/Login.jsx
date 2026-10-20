@@ -3,15 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router'
 import { apiFetch } from '../services/api.js'
 import Logo from './Logo.jsx'
 import { saveToken } from '../services/token.js'
+import { inputClasses } from '../styles/formClasses.js'
 
 export default function Login() {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-
-  const inputClasses =
-    'w-full rounded-lg border border-field-border bg-field px-3 py-3 text-base focus:outline-2 focus:outline-offset-2 focus:outline-brand'
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -105,7 +103,7 @@ export default function Login() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Email
               <input
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 type="email"
                 name="email"
                 autoComplete="email"
@@ -116,7 +114,7 @@ export default function Login() {
             <label className="flex flex-col gap-2 text-sm font-medium">
               Password
               <input
-                className={inputClasses}
+                className={`${inputClasses} bg-field`}
                 type="password"
                 name="password"
                 autoComplete="current-password"

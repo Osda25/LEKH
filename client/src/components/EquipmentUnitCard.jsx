@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { Flag, X } from 'lucide-react'
+import { Flag, X, CalendarPlus } from 'lucide-react'
 import ProblemListItem from './ProblemListItem.jsx'
 import FaultReportForm from './FaultReportForm.jsx'
+import LoanRequestForm from './LoanRequestForm.jsx'
 
 export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }) {
-  const [openForm, setOpenForm] = useState(false)
+  const [openFaultForm, setOpenFaultForm] = useState(false)
+  const [openLoanForm, setOpenLoanForm] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [successLoanMessage, setSuccessLoanMessage] = useState('')
 
   const conditionText =
     equipmentUnit.condition === 'IN_SERVICE'
@@ -83,6 +86,58 @@ export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }
           <p>{conditionText}</p>
         </div>
 
+        <div className="my-4 flex flex-col gap-3">
+          {equipmentUnit.condition === 'OUT_OF_SERVICE' && (
+            <p className="text-sm text-muted italic">
+              Loan requests are unavailable while this unit is out of service.
+            </p>
+          )}
+
+          <button
+            type="button"
+            disabled={equipmentUnit.condition === 'OUT_OF_SERVICE'}
+            onClick={() => {
+              setOpenLoanForm((previous) => !previous)
+              setOpenFaultForm(false)
+              setSuccessMessage('')
+              setSuccessLoanMessage('')
+            }}
+            aria-expanded={openLoanForm}
+            className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
+              openLoanForm
+                ? 'border-field-border bg-white text-body hover:bg-field'
+                : 'border-brand bg-brand text-white hover:bg-brand-hover'
+            }`}
+          >
+            {openLoanForm ? (
+              <X size={18} aria-hidden="true" />
+            ) : (
+              <CalendarPlus size={18} aria-hidden="true" />
+            )}
+
+            {openLoanForm ? 'Cancel' : 'Request loan'}
+          </button>
+        </div>
+
+        {openLoanForm && (
+          <LoanRequestForm
+            equipmentUnit={equipmentUnit}
+            onSuccess={() => {
+              setOpenLoanForm(false)
+              setSuccessLoanMessage('Loan request successfully created.')
+            }}
+          />
+          )}
+
+        {successLoanMessage && (
+          <p
+            role="status"
+            className="rounded-lg bg-success-bg p-3 text-sm text-success"
+          >
+            {successLoanMessage}
+          </p>
+        )}
+        
         <div>
           <h3 className="mb-2 text-sm font-medium text-muted">
             Known problems
@@ -107,31 +162,33 @@ export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }
           <button
             type="button"
             onClick={() => {
-              setOpenForm((previous) => !previous)
+              setOpenFaultForm((previous) => !previous)
+              setOpenLoanForm(false)
+              setSuccessLoanMessage('')
               setSuccessMessage('')
             }}
-            aria-expanded={openForm}
+            aria-expanded={openFaultForm}
             className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 ${
-              openForm
+              openFaultForm
                 ? 'border-field-border bg-white text-body hover:bg-field'
                 : 'border-brand bg-brand text-white hover:bg-brand-hover'
             }`}
           >
-            {openForm ? (
+            {openFaultForm ? (
               <X size={18} aria-hidden="true" />
             ) : (
               <Flag size={18} aria-hidden="true" />
             )}
 
-            {openForm ? 'Cancel' : 'Report a fault'}
+            {openFaultForm ? 'Cancel' : 'Report a fault'}
           </button>
         </div>
 
-        {openForm && (
+        {openFaultForm && (
           <FaultReportForm
             equipmentUnit={equipmentUnit}
             onSuccess={() => {
-              setOpenForm(false)
+              setOpenFaultForm(false)
               setSuccessMessage('Fault report created.')
               onUpdated()
             }}
