@@ -6,10 +6,18 @@ import requireAuth from '../middleware/requireAuth.js'
 import requireRole from '../middleware/requireRole.js'
 import equipmentCategories from '../constants/equipmentCategory.js'
 import { UnitCondition } from '../generated/prisma/enums.ts'
+import { isUnitAvailable } from '../utils/availability.js'
 
 const router = express.Router()
 
 router.get('/', requireAuth, async (request, response) => {
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Stockholm',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date())
+
   try {
     const equipmentTypes = await prisma.equipmentType.findMany({
       orderBy: {
@@ -22,20 +30,28 @@ router.get('/', requireAuth, async (request, response) => {
         description: true,
         units: {
           select: {
-            condition: true
+            condition: true,
+            loans: {
+              where: {
+                status: {
+                  in: ['APPROVED', 'ACTIVE', 'RETURN_REQUESTED']
+                }
+              },
+              select: {
+                status: true,
+                startDate: true,
+                endDate: true
+              }
+            }
           }
         }
       }
     })
 
     const result = equipmentTypes.map((type) => {
-      let availableType = false
-
-      for (const unit of type.units) {
-        if (unit.condition === 'IN_SERVICE') {
-          availableType = true
-        }
-      }
+      const availableType = type.units.some((unit) =>
+        isUnitAvailable(unit, today)
+      )
 
       return {
         id: type.id,
@@ -71,6 +87,13 @@ router.get('/:id', requireAuth, async (request, response) => {
     })
   }
 
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Stockholm',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date())
+
   try {
     const equipmentType = await prisma.equipmentType.findUnique({
       where: { id },
@@ -97,6 +120,18 @@ router.get('/:id', requireAuth, async (request, response) => {
                 title: true,
                 description: true,
                 createdAt: true
+              }
+            },
+            loans: {
+              where: {
+                status: {
+                  in: ['APPROVED', 'ACTIVE', 'RETURN_REQUESTED']
+                }
+              },
+              select: {
+                status: true,
+                startDate: true,
+                endDate: true
               }
             }
           }
@@ -132,20 +167,22 @@ router.get('/:id', requireAuth, async (request, response) => {
       })
     }
 
-    let availableType = false
+    const units = equipmentType.units.map((unit) => ({
+      id: unit.id,
+      identifier: unit.identifier,
+      location: unit.location,
+      condition: unit.condition,
+      faultReports: unit.faultReports,
+      available: isUnitAvailable(unit, today)
+    }))
 
-    for (const unit of equipmentType.units) {
-      if (unit.condition === 'IN_SERVICE') {
-        unit.available = true
-        availableType = true
-      } else {
-        unit.available = false
-      }
-    }
+    const availableType = units.some((unit) => unit.available)
 
-    equipmentType.available = availableType
-
-    return response.status(200).json(equipmentType)
+    return response.status(200).json({
+      ...equipmentType,
+      units,
+      available: availableType
+    })
   } catch {
     return response.status(500).json({
       error: 'Equipment type could not be retrieved.'
