@@ -4,8 +4,18 @@ import { apiFetch } from "../services/api"
 import { Flag, X } from 'lucide-react'
 import ProblemListItem from "./ProblemListItem.jsx"
 import FaultReportForm from './FaultReportForm.jsx'
+import LoanHistory from './LoanHistory.jsx'
 
-export default function ManageEquipmentUnitCard({ equipmentUnit, problems, onUpdated, conditions }) {
+export default function ManageEquipmentUnitCard({
+  equipmentUnit,
+  problems,
+  onUpdated,
+  conditions,
+  loanHistory,
+  unitLoans,
+  isLoanHistoryLoading,
+  loanHistoryError
+}) {
   const [unitCondition, setUnitCondition] = useState(equipmentUnit.condition)
   const [openForm, setOpenForm] = useState(false)
   const [conditionError, setConditionError] = useState('')
@@ -14,10 +24,32 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, problems, onUpd
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { id } = useParams()
 
-  const availabilityText =
-    equipmentUnit.available
-      ? 'Available'
-      : 'Unavailable'
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Stockholm',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date())
+
+  let availabilityText = 'Available'
+
+  if (!equipmentUnit.available) {
+    if (equipmentUnit.condition === 'OUT_OF_SERVICE') {
+      availabilityText = 'Out of service'
+    } else if (unitLoans.some((loan) => loan.status === 'RETURN_REQUESTED')) {
+      availabilityText = 'Return pending'
+    } else if (unitLoans.some((loan) => loan.status === 'ACTIVE')) {
+      availabilityText = 'On loan'
+    } else if (unitLoans.some((loan) =>
+      loan.status === 'APPROVED' &&
+      loan.startDate.slice(0, 10) <= today &&
+      loan.endDate.slice(0, 10) >= today
+    )) {
+      availabilityText = 'Reserved'
+    } else {
+      availabilityText = 'Unavailable'
+    }
+  }
 
   async function handleConditionSubmit(event) {
     event.preventDefault()
@@ -248,6 +280,13 @@ export default function ManageEquipmentUnitCard({ equipmentUnit, problems, onUpd
             {successFaultMessage}
           </p>
         )}
+
+        <LoanHistory
+          loans={loanHistory}
+          isLoading={isLoanHistoryLoading}
+          error={loanHistoryError}
+        />
+
       </div>
     </li>
   )

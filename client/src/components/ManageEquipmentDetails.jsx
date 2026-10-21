@@ -17,6 +17,9 @@ export default function ManageEquipmentDetails() {
   const [conditions, setConditions] = useState([])
   const [refreshKey, setRefreshKey] = useState(0)
   const [openForm, setOpenForm] = useState(false)
+  const [loans, setLoans] = useState([])
+  const [isLoanHistoryLoading, setIsLoanHistoryLoading] = useState(true)
+  const [loanHistoryError, setLoanHistoryError] = useState('')
 
   useEffect(() => {
     async function loadEquipmentType() {
@@ -36,6 +39,29 @@ export default function ManageEquipmentDetails() {
 
     loadEquipmentType()
   }, [id, refreshKey])
+
+  useEffect(() => {
+    async function loadLoans() {
+      setIsLoanHistoryLoading(true)
+
+      try {
+        const result = await apiFetch('/api/loans')
+        setLoans(result)
+        setLoanHistoryError('')
+      } catch (error) {
+        setLoans([])
+        setLoanHistoryError(
+          error.status
+            ? error.message
+            : 'Borrowing history could not be loaded. Please try again.'
+        )
+      } finally {
+        setIsLoanHistoryLoading(false)
+      }
+    }
+
+    loadLoans()
+  }, [refreshKey])
 
   useEffect(() => {
     async function getConditions() {
@@ -73,7 +99,11 @@ export default function ManageEquipmentDetails() {
 
   function renderUnits() {
     if (equipmentType.units.length === 0) {
-      return <li className="mt-4 p-4 w-full rounded-xl border border-field-border bg-field">No equipment units to show.</li>;
+      return (
+        <li className="mt-4 w-full rounded-xl border border-field-border bg-field p-4">
+          No equipment units to show.
+        </li>
+      )
     }
 
     return equipmentType.units.map((equipmentUnit) => (
@@ -83,8 +113,17 @@ export default function ManageEquipmentDetails() {
         problems={equipmentType.problems}
         onUpdated={() => setRefreshKey((previous) => previous + 1)}
         conditions={conditions}
+        loanHistory={loans.filter((loan) =>
+          loan.equipmentUnitId === equipmentUnit.id &&
+          loan.status === 'RETURNED'
+        )}
+        unitLoans={loans.filter((loan) =>
+          loan.equipmentUnitId === equipmentUnit.id
+        )}
+        isLoanHistoryLoading={isLoanHistoryLoading}
+        loanHistoryError={loanHistoryError}
       />
-    ));
+    ))
   }
 
   function renderGuides() {
