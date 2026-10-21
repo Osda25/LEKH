@@ -365,6 +365,22 @@ router.patch('/:id/approve', requireAuth, requireRole('CARETAKER', 'ADMIN'), asy
           }
         }
 
+        const today = new Intl.DateTimeFormat('sv-SE', {
+          timeZone: 'Europe/Stockholm',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(new Date())
+
+        const endDate = loanRequest.endDate.toISOString().slice(0, 10)
+
+        if (endDate < today) {
+          return {
+            httpStatus: 409,
+            error: 'This loan request cannot be approved because the requested period has expired.'
+          }
+        }
+
         const conflictingLoanDates = await tx.loan.findFirst({
           where: {
             equipmentUnitId: loanRequest.equipmentUnitId,

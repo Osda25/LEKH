@@ -41,6 +41,7 @@ export default function ManagementDashboard() {
             title="Loans & Requests"
             description="Borrowing and returns"
             icon={CalendarCheck}
+            to="/dashboard/loans"
           />
 
           <DashboardCard
