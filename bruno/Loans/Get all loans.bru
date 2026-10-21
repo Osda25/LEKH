@@ -1,0 +1,21 @@
+meta {
+  name: Get all loans
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/loans/
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

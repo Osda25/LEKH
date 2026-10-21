@@ -1,0 +1,21 @@
+meta {
+  name: Activate approved loan request
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/loans/{{loanId}}/checkout
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

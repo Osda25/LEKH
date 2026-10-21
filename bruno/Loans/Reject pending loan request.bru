@@ -1,0 +1,21 @@
+meta {
+  name: Reject pending loan request
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/loans/{{loanId}}/reject
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}
