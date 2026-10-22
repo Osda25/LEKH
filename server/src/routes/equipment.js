@@ -765,7 +765,7 @@ router.post('/:id/guides', requireAuth, requireRole('CARETAKER', 'ADMIN'), async
       select: {
         id: true,
         title: true,
-        description: true,
+        content: true,
         url: true,
         equipmentTypeId: true,
       }
