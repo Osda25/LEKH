@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { apiFetch } from "../services/api.js"
 import Logo from './Logo.jsx'
 import EquipmentCard from './EquipmentCard.jsx'
+import { Boxes } from 'lucide-react'
 
 export default function ManageEquipment() {
   const [equipmentTypes, setEquipmentTypes] = useState([])
@@ -70,7 +71,7 @@ export default function ManageEquipment() {
             to="/dashboard/equipment/new"
             className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
-            <span aria-hidden="true">+</span>
+            <span aria-hidden="true"><Boxes size={18} aria-hidden="true" /></span>
             Add new equipment type
           </Link>
         </div>

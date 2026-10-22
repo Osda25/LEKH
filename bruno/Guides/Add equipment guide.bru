@@ -1,0 +1,30 @@
+meta {
+  name: Add equipment guide
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/equipment/{{equipmentId}}/guides
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "title": "Getting started",
+    "content": "Connect the power supply before starting the equipment.",
+    "url": ""
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

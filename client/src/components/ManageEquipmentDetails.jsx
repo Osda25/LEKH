@@ -1,7 +1,7 @@
-import { Link, useParams, useLocation } from 'react-router'
+import { Link, useParams, useLocation, useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
-import { Flag, X } from 'lucide-react'
+import { Flag, X, BookOpen, Box } from 'lucide-react'
 import Logo from './Logo'
 import ManageEquipmentUnitCard from './ManageEquipmentUnitCard.jsx'
 import EquipmentGuideCard from './EquipmentGuideCard.jsx'
@@ -20,6 +20,8 @@ export default function ManageEquipmentDetails() {
   const [loans, setLoans] = useState([])
   const [isLoanHistoryLoading, setIsLoanHistoryLoading] = useState(true)
   const [loanHistoryError, setLoanHistoryError] = useState('')
+  const [flashMessage, setFlashMessage] = useState(location.state?.message || '')
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function loadEquipmentType() {
@@ -79,6 +81,15 @@ export default function ManageEquipmentDetails() {
 
     getConditions()
   }, [])
+
+  useEffect(() => {
+    if (location.state?.message) {
+      navigate(location.pathname, {
+        replace: true,
+        state: null
+      })
+    }
+  }, [location.pathname, location.state?.message, navigate])
 
   function renderKnownProblems() {
     if (equipmentType.problems.length === 0) {
@@ -144,7 +155,10 @@ export default function ManageEquipmentDetails() {
   }
 
   return (
-    <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
+    <section 
+      onClick={() => setFlashMessage('')}
+      className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8"
+    >
       <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
         <header className="mb-8">
           <Logo />
@@ -165,15 +179,15 @@ export default function ManageEquipmentDetails() {
               <p role="alert">{error}</p>
             ) : equipmentType ? (
               <>
-                {location.state?.message && (
+                {flashMessage && (
                   <p
                     role="status"
                     className="rounded-lg bg-success-bg p-3 text-sm text-success"
                   >
-                    {location.state.message}
+                    {flashMessage}
                   </p>
                 )}
-                
+                                
                 <h2 className="m-3 text-2xl font-bold text-center">{equipmentType.name}</h2>
                 
                 <h3 className="text-xl italic">{equipmentType.category?.trim() || 'Unknown category.'}</h3>
@@ -251,7 +265,7 @@ export default function ManageEquipmentDetails() {
                         to={`/dashboard/equipment/${id}/units/new`}
                         className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                       >
-                        <span aria-hidden="true">+</span>
+                        <span aria-hidden="true"><Box size={18} aria-hidden="true" /></span>
                         Add new equipment unit
                       </Link>
                     </div>
@@ -268,6 +282,16 @@ export default function ManageEquipmentDetails() {
                     <ul className="flex flex-col gap-4">
                       {renderGuides()}
                     </ul>
+
+                    <div className="mt-4">
+                      <Link
+                        to={`/dashboard/equipment/${id}/guides/new`}
+                        className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      >
+                        <span aria-hidden="true"><BookOpen size={18} aria-hidden="true"></BookOpen></span>
+                        Add new equipment guide
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </>
