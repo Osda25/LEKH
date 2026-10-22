@@ -2,7 +2,7 @@ import { BookOpen } from 'lucide-react'
 
 export default function EquipmentGuideCard({ guide }) {
   return (
-    <li className="w-full p-2">
+    <li className="w-full p-4 rounded-xl border border-field-border bg-field">
       <h2 className="flex items-center gap-2 text-lg font-bold text-body">
         <BookOpen size={18} className="shrink-0" aria-hidden="true"></BookOpen>
         {guide.title}

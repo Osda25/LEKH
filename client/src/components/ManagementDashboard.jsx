@@ -3,7 +3,7 @@ import DashboardCard from './DashboardCard.jsx'
 import {
   Boxes,
   CalendarCheck,
-  Wrench
+  Flag
 } from 'lucide-react'
 
 export default function ManagementDashboard() {
@@ -40,7 +40,7 @@ export default function ManagementDashboard() {
           <DashboardCard
             title="Fault Reports"
             description="Reported and known problems"
-            icon={Wrench}
+            icon={Flag}
           />
 
         </div>

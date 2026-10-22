@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Flag, X, CalendarPlus } from 'lucide-react'
+import { Flag, X, CalendarPlus, Box } from 'lucide-react'
 import ProblemListItem from './ProblemListItem.jsx'
 import FaultReportForm from './FaultReportForm.jsx'
 import LoanRequestForm from './LoanRequestForm.jsx'
@@ -57,7 +57,8 @@ export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }
   return (
     <li className="w-full rounded-xl border border-field-border bg-field p-4">
       <div className="flex items-start justify-between gap-4">
-        <h3 className="text-lg font-bold text-body">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-body">
+          <Box size={18} className="shrink-0" aria-hidden="true" />
           {equipmentUnit.identifier}
         </h3>
 

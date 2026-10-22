@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useParams } from "react-router"
 import { apiFetch } from "../services/api"
-import { Flag, X } from 'lucide-react'
+import { Flag, X, Box, Wrench } from 'lucide-react'
 import ProblemListItem from "./ProblemListItem.jsx"
 import FaultReportForm from './FaultReportForm.jsx'
 import LoanHistory from './LoanHistory.jsx'
@@ -133,7 +133,8 @@ export default function ManageEquipmentUnitCard({
   return (
     <li className="w-full rounded-xl border border-field-border bg-field p-4">
       <div className="flex items-start justify-between gap-4">
-        <h3 className="text-lg font-bold text-body">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-body">
+          <Box size={18} className="shrink-0" aria-hidden="true" />
           {equipmentUnit.identifier}
         </h3>
 
@@ -207,8 +208,12 @@ export default function ManageEquipmentUnitCard({
                 <button
                   type="submit"
                   disabled={isSubmitting || equipmentUnit.condition === unitCondition}
-                  className="min-h-12 max-w-48 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
+                  className="min-h-12 inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-wait disabled:opacity-60"
                 >
+
+                  <Wrench size={18} aria-hidden="true" />
+
+
                   {isSubmitting ? 'Updating condition...' : 'Update condition'}
                 </button>
               </div>
