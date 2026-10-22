@@ -2,7 +2,6 @@ import Logo from './Logo.jsx'
 import DashboardCard from './DashboardCard.jsx'
 import {
   Boxes,
-  BookOpen,
   CalendarCheck,
   Wrench
 } from 'lucide-react'
@@ -29,12 +28,6 @@ export default function ManagementDashboard() {
             description="Types, units and condition"
             icon={Boxes}
             to="/dashboard/equipment"
-          />
-
-          <DashboardCard
-            title="Guides"
-            description="Setup and usage instructions"
-            icon={BookOpen}
           />
 
           <DashboardCard

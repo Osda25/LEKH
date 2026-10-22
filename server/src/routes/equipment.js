@@ -675,4 +675,117 @@ router.post('/:id/problems', requireAuth, requireRole('CARETAKER', 'ADMIN'), asy
   }
 })
 
+router.post('/:id/guides', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Request body is required.'
+    })
+  }
+
+  const { title, content, url } = request.body
+
+  const equipmentTypeId = Number(request.params.id)
+
+  if (
+    !Number.isSafeInteger(equipmentTypeId) || 
+    equipmentTypeId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid equipment type ID.'
+    })
+  }
+
+  if (
+    typeof title !== 'string' ||
+    typeof content !== 'string' ||
+    (url != null && typeof url !== 'string')
+  ) {
+    return response.status(400).json({
+      error: 'Title, content and url if provided must be text.'
+    })
+  }
+
+  const normalizedTitle = title.trim()
+  const normalizedContent = content.trim()
+  let normalizedUrl = ''
+
+  if (typeof url === 'string') {
+    normalizedUrl = url.trim()
+  }
+
+  if (
+    !normalizedTitle ||
+    !normalizedContent
+  ) {
+    return response.status(400).json({
+      error: 'Title and content are required.'
+    })
+  }
+
+  if (normalizedUrl) {
+    try {
+      const parsedUrl = new URL(normalizedUrl)
+
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        return response.status(400).json({
+          error: 'URL must start with http:// or https://.'
+        })
+      }
+    } catch {
+      return response.status(400).json({
+        error: 'Not a valid URL.'
+      })
+    }
+  }
+
+
+  try {
+    const equipmentType = await prisma.equipmentType.findUnique({
+      where: {
+        id: equipmentTypeId
+      },
+      select: {
+        id: true
+      }
+    })
+
+    if (!equipmentType) {
+      return response.status(404).json({
+        error: 'Equipment type not found.'
+      })
+    }
+
+    const equipmentGuide = await prisma.equipmentGuide.create({
+      data: {
+        title: normalizedTitle,
+        content: normalizedContent,
+        url: normalizedUrl || null,
+        equipmentTypeId
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        url: true,
+        equipmentTypeId: true,
+      }
+    })
+
+    return response.status(201).json({
+      message: 'Equipment guide successfully created.',
+      data: equipmentGuide
+    })
+  } catch (error) {
+    console.error(`Equipment guide creation failed: `, {
+      name: error.name,
+      code: error.code,
+      message: error.message
+    })
+
+    return response.status(500).json({
+      error: 'Equipment guide could not be created.'
+    })
+  }
+})
+
 export default router
