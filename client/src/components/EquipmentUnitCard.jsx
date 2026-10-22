@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Flag, X, CalendarPlus, Box } from 'lucide-react'
+import { Flag, X, CalendarPlus, Box, ChevronDown } from 'lucide-react'
 import ProblemListItem from './ProblemListItem.jsx'
 import FaultReportForm from './FaultReportForm.jsx'
 import LoanRequestForm from './LoanRequestForm.jsx'
@@ -9,6 +9,7 @@ export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }
   const [openLoanForm, setOpenLoanForm] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [successLoanMessage, setSuccessLoanMessage] = useState('')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const conditionText =
     equipmentUnit.condition === 'IN_SERVICE'
@@ -56,29 +57,52 @@ export default function EquipmentUnitCard({ equipmentUnit, problems, onUpdated }
 
   return (
     <li className="w-full rounded-xl border border-field-border bg-field p-4">
-      <div className="flex items-start justify-between gap-4">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-body">
+      <button
+        type="button"
+        onClick={() => setIsExpanded((previous) => !previous)}
+        aria-expanded={isExpanded}
+        aria-controls={`unit-details-${equipmentUnit.id}`}
+        className="flex min-h-12 w-full flex-wrap items-center justify-between gap-2 rounded text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      >
+        <span className="flex min-w-0 items-center gap-2 text-lg font-bold text-body">
           <Box size={18} className="shrink-0" aria-hidden="true" />
-          {equipmentUnit.identifier}
-        </h3>
-
-        <span
-          className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium ${
-            equipmentUnit.available
-              ? 'bg-success-bg text-success'
-              : 'bg-danger-bg text-danger'
-          }`}
-        >
-          {availabilityText}
+          <span className="break-words">
+            {equipmentUnit.identifier}
+          </span>
         </span>
+
+        <span className="flex shrink-0 items-center gap-2">
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-medium ${
+              equipmentUnit.available
+                ? 'bg-success-bg text-success'
+                : 'bg-danger-bg text-danger'
+            }`}
+          >
+            {availabilityText}
+          </span>
+
+          <ChevronDown
+            size={20}
+            aria-hidden="true"
+            className={`transition-transform ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+          />
+        </span>
+      </button>
+
+      <div>
+        <p className="text-sm font-medium text-muted">Location</p>
+        <p>{equipmentUnit.location}</p>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3">
-        <div>
-          <h3 className="text-sm font-medium text-muted">Location</h3>
-          <p>{equipmentUnit.location}</p>
-        </div>
-
+      <div
+        id={`unit-details-${equipmentUnit.id}`}
+        className={`mt-4 flex-col gap-3 ${
+          isExpanded ? 'flex' : 'hidden'
+        }`}
+      >
         <div>
           <h3 className="text-sm font-medium text-muted">
             Condition
