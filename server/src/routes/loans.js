@@ -224,6 +224,114 @@ router.get('/', requireAuth, requireRole('CARETAKER', 'ADMIN'), async (request, 
   }
 })
 
+
+router.get('/my', requireAuth, async (request, response) => {
+  const userId = Number(request.auth.userId)
+
+  if (!Number.isSafeInteger(userId) || userId <= 0) {
+    return response.status(401).json({
+      error: 'Invalid user authentication.'
+    })
+  }
+
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Europe/Stockholm',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date())
+
+  try {
+    const loans = await prisma.loan.findMany({
+      where: {
+        userId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      select: {
+        id: true,
+        status: true,
+        startDate: true,
+        endDate: true,
+        createdAt: true,
+        checkedOutAt: true,
+        returnedAt: true,
+        equipmentUnit: {
+          select: {
+            identifier: true,
+            location: true,
+            condition: true,
+            equipmentType: {
+              select: {
+                name: true
+              }
+            },
+            loans: {
+              where: {
+                status: {
+                  in: ['ACTIVE', 'RETURN_REQUESTED']
+                }
+              },
+              select: {
+                id: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const result = loans.map((loan) => {
+      const startDate = loan.startDate.toISOString().slice(0, 10)
+      const endDate = loan.endDate.toISOString().slice(0, 10)
+
+      const isOverdue =
+        ['ACTIVE', 'RETURN_REQUESTED'].includes(loan.status) &&
+        endDate < today
+
+      const { loans: blockingLoans, ...equipmentUnit } = loan.equipmentUnit
+
+      let pickupStatus = null
+
+      if (loan.status === 'APPROVED') {
+        if (endDate < today) {
+          pickupStatus = 'PERIOD_PASSED'
+        } else if (startDate > today) {
+          pickupStatus = 'SCHEDULED'
+        } else if (
+          equipmentUnit.condition !== 'IN_SERVICE' ||
+          blockingLoans.length > 0
+        ) {
+          pickupStatus = 'NOT_READY'
+        } else {
+          pickupStatus = 'READY'
+        }
+      }
+
+      return {
+        ...loan,
+        equipmentUnit,
+        pickupStatus,
+        isOverdue
+      }
+    })
+
+    return response.status(200).json(result)
+  } catch (error) {
+    console.error('Failed to load user loans:', {
+      name: error.name,
+      code: error.code,
+      message: error.message
+    })
+
+    return response.status(500).json({
+      error: 'User loans could not be retrieved.'
+    })
+  }
+})
+
+
 router.get('/booked-periods/:unitId', requireAuth, async (request, response) => {
   const equipmentUnitId = Number(request.params.unitId)
 
