@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api.js'
-import Logo from './Logo.jsx'
 import DashboardCard from './DashboardCard.jsx'
 import {
   Boxes,
@@ -72,7 +71,6 @@ export default function ManagementDashboard() {
     <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
       <div className="w-full max-w-3xl rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
         <header className="mb-8">
-          <Logo />
 
           <h1 className="mt-6 text-center text-2xl font-bold">
             Management Dashboard

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Navigate } from 'react-router'
+import { Navigate, Outlet } from 'react-router'
 import { getToken, removeToken } from '../services/token.js'
 import { apiFetch } from "../services/api.js"
 
 function ProtectedRoute({ children, allowedRoles }) {
   const [status, setStatus] = useState('checking')
+  const [user, setUser] = useState(null)
   const token = getToken()
 
   useEffect(() => {
@@ -19,6 +20,8 @@ function ProtectedRoute({ children, allowedRoles }) {
           setStatus('forbidden')
           return
         }
+
+        setUser(result)
         setStatus('authenticated')
       } catch (error) {
         if (error.status === 401) {
@@ -58,7 +61,7 @@ function ProtectedRoute({ children, allowedRoles }) {
   }
 
   if (status === 'authenticated') {
-    return children
+    return children ?? <Outlet context={user} />
   }
 }
 

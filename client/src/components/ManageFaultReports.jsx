@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 import { apiFetch } from '../services/api.js'
-import Logo from './Logo.jsx'
 import ManagementFaultReportCard from './ManagementFaultReportCard.jsx'
 
 export default function ManageFaultReports() {
@@ -107,10 +106,9 @@ export default function ManageFaultReports() {
   }
 
   return (
-    <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
+    <section className="flex flex-1 items-center justify-center bg-brand px-4 py-8">
       <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
         <header className="mb-8">
-          <Logo />
 
           <Link
             to="/dashboard"
