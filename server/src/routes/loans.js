@@ -858,4 +858,89 @@ router.patch('/:id/return', requireAuth, requireRole('CARETAKER', 'ADMIN'), asyn
   }
 })
 
+
+router.patch('/:id/request-return', requireAuth, async (request, response) => {
+  const loanId = Number(request.params.id)
+  const userId = Number(request.auth.userId)
+
+  if (
+    !Number.isSafeInteger(loanId) ||
+    loanId <= 0
+  ) {
+    return response.status(400).json({
+      error: 'Not a valid loan ID.'
+    })
+  }
+
+  if (
+    !Number.isSafeInteger(userId) ||
+    userId <= 0
+  ) {
+    return response.status(401).json({
+      error: 'Invalid user authentication.'
+    })
+  }
+
+  try {
+    const loanRequest = await prisma.loan.findUnique({
+      where: {
+        id: loanId
+      },
+      select: {
+        userId: true,
+        status: true
+      }
+    })
+
+    if (!loanRequest || loanRequest.userId !== userId) {
+      return response.status(404).json({
+        error: 'Loan not found.'
+      })
+    }
+
+    if (loanRequest.status !== 'ACTIVE') {
+      return response.status(409).json({
+        error: 'Only active loans can request return confirmation.'
+      })
+    }
+
+    const updatedLoan = await prisma.loan.update({
+      where: {
+        id: loanId,
+        userId,
+        status: 'ACTIVE'
+      },
+      data: {
+        status: 'RETURN_REQUESTED'
+      },
+      select: {
+        id: true,
+        status: true
+      }
+    })
+
+    return response.status(200).json({
+      message: 'Equipment return confirmation successfully requested.',
+      data: updatedLoan
+    })
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return response.status(409).json({
+        error: 'Return confirmation could not be requested because the loan status has changed.'
+      })
+    }
+
+    console.error('Loan return request failed:', {
+      name: error.name,
+      code: error.code,
+      message: error.message
+    })
+
+    return response.status(500).json({
+      error: 'Equipment return confirmation could not be requested.'
+    })
+  }
+})
+
+
 export default router
