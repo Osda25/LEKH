@@ -2,7 +2,6 @@ import { Link, useParams, useLocation, useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
 import { Flag, X, BookOpen, Box } from 'lucide-react'
-import Logo from './Logo'
 import ManageEquipmentUnitCard from './ManageEquipmentUnitCard.jsx'
 import EquipmentGuideCard from './EquipmentGuideCard.jsx'
 import KnownProblemForm from './KnownProblemForm.jsx'
@@ -157,11 +156,10 @@ export default function ManageEquipmentDetails() {
   return (
     <section 
       onClick={() => setFlashMessage('')}
-      className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8"
+      className="flex flex-1 items-center justify-center bg-brand px-4 py-8"
     >
       <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
         <header className="mb-8">
-          <Logo />
 
         </header>
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 import { apiFetch } from "../services/api.js"
-import Logo from './Logo.jsx'
 import EquipmentCard from './EquipmentCard.jsx'
 import { Boxes } from 'lucide-react'
 
@@ -48,10 +47,9 @@ export default function ManageEquipment() {
   } 
 
   return (
-    <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
+    <section className="flex flex-1 items-center justify-center bg-brand px-4 py-8">
       <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
         <header className="mb-8">
-          <Logo />
 
           <Link
             to="/dashboard"

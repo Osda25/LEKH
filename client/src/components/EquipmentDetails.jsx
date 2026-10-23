@@ -1,7 +1,6 @@
 import { Link, useParams, useLocation } from 'react-router'
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../services/api'
-import Logo from './Logo'
 import EquipmentUnitCard from './EquipmentUnitCard'
 import EquipmentGuideCard from './EquipmentGuideCard'
 
@@ -63,10 +62,9 @@ export default function EquipmentDetails() {
   }
 
   return (
-      <section className="flex min-h-dvh items-center justify-center bg-brand px-4 py-8">
+      <section className="flex flex-1 items-center justify-center bg-brand px-4 py-8">
         <div className="w-full max-w-md rounded-3xl bg-white p-6 text-body shadow-xl sm:p-10">
           <header className="mb-8">
-            <Logo />
 
           </header>
 
