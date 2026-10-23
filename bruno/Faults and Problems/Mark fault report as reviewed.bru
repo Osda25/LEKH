@@ -1,0 +1,27 @@
+meta {
+  name: Mark fault report as reviewed
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/faultreports/{{faultReportId}}/review
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "reviewNote": "The damage is cosmetic and does not affect operation. Equipment can remain in service."
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

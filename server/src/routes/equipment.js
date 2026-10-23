@@ -119,7 +119,11 @@ router.get('/:id', requireAuth, async (request, response) => {
                 id: true,
                 title: true,
                 description: true,
-                createdAt: true
+                reviewNote: true,
+                status: true,
+                createdAt: true,
+                reviewedAt: true,
+
               }
             },
             loans: {
