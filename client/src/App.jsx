@@ -16,6 +16,7 @@ import ManageEquipmentDetails from './components/ManageEquipmentDetails.jsx'
 import AddEquipmentUnit from './components/AddEquipmentUnit.jsx'
 import ManageLoans from './components/ManageLoans.jsx'
 import AddEquipmentGuide from './components/AddEquipmentGuide.jsx'
+import MyLoans from './components/MyLoans.jsx'
 
 const MANAGEMENT_ROLES = ['CARETAKER', 'ADMIN']
 
@@ -32,7 +33,9 @@ export default function App() {
           />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/equipment" element={
+          <Route 
+            path="/equipment" 
+            element={
             <ProtectedRoute key={location.pathname}>
               <Equipment />
             </ProtectedRoute>} 
@@ -42,6 +45,13 @@ export default function App() {
             element={
             <ProtectedRoute key={location.pathname}>
               <EquipmentDetails />
+            </ProtectedRoute>}
+          />
+          <Route
+            path="/loans"
+            element={
+            <ProtectedRoute key={location.pathname}>
+              <MyLoans />
             </ProtectedRoute>}
           />
           <Route
