@@ -25,6 +25,11 @@ enum UnitCondition {
   OUT_OF_SERVICE
 }
 
+enum FaultReportStatus {
+  OPEN
+  REVIEWED
+}
+
 enum LoanStatus {
   PENDING
   APPROVED
@@ -80,10 +85,13 @@ model EquipmentGuide {
 }
 
 model FaultReport {
-  id          Int      @id @default(autoincrement())
+  id          Int               @id @default(autoincrement())
   title       String
   description String
-  createdAt   DateTime @default(now())
+  reviewNote  String?
+  status      FaultReportStatus @default(OPEN)
+  createdAt   DateTime          @default(now())
+  reviewedAt  DateTime?
 
   equipmentUnitId Int
   equipmentUnit   EquipmentUnit @relation(fields: [equipmentUnitId], references: [id])

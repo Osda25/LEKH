@@ -4,6 +4,7 @@ import { clientUrl } from './config.js'
 import authRouter from './routes/auth.js'
 import equipmentRouter from './routes/equipment.js'
 import loansRouter from './routes/loans.js'
+import faultReportRouter from './routes/faultReports.js'
 
 const app = express()
 
@@ -24,5 +25,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/equipment', equipmentRouter)
 
 app.use('/api/loans', loansRouter)
+
+app.use('/api/fault-reports', faultReportRouter)
 
 export default app
