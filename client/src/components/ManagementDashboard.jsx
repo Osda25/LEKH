@@ -41,6 +41,7 @@ export default function ManagementDashboard() {
             title="Fault Reports"
             description="Reported and known problems"
             icon={Flag}
+            to="/dashboard/fault-reports"
           />
 
         </div>

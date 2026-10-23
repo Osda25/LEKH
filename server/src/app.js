@@ -26,6 +26,6 @@ app.use('/api/equipment', equipmentRouter)
 
 app.use('/api/loans', loansRouter)
 
-app.use('/api/faultReports', faultReportRouter)
+app.use('/api/fault-reports', faultReportRouter)
 
 export default app
