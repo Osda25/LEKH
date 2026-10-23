@@ -1,19 +1,30 @@
+
 import { Link } from 'react-router'
 
 export default function DashboardCard({
   title,
   description,
   icon: Icon,
-  to
+  to,
+  badgeCount,
+  badgeLabel = 'new'
 }) {
   const content = (
     <>
-      <Icon
-        size={24}
-        strokeWidth={1.8}
-        className="text-brand"
-        aria-hidden="true"
-      />
+      <div className="flex items-start justify-between gap-2">
+        <Icon
+          size={24}
+          strokeWidth={1.8}
+          className="text-brand"
+          aria-hidden="true"
+        />
+
+        {badgeCount > 0 && (
+          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+            {badgeCount} {badgeLabel}
+          </span>
+        )}
+      </div>
 
       <h2 className="font-bold text-body">
         {title}
