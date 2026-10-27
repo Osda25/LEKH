@@ -64,6 +64,24 @@
 
 - *NFR04: User input shall be validated before being processed or stored by the system.*
 
+### Implementation Status
+
+The requirements above describe the original intended scope of the project. During development, some features were reprioritized to focus on the customer's acceptance tests and the most important user workflows.
+
+The final prototype includes user authentication, role-based access, equipment management, equipment guides, fault reporting, known problems, equipment loan requests, loan management and returns. The customer considered acceptance tests 1–11 fulfilled during the final demo.
+
+Some requirements are only partially implemented or remain in the backlog:
+
+- **FR03:** Equipment browsing is implemented, but search and filtering are not.
+- **FR06 and FR14:** Role-based equipment management is implemented, but assigning caretakers to specific equipment types and managing these permissions through the application are not.
+- **FR08:** Equipment-type-specific borrowing rules are not implemented.
+- **FR11 and FR12:** Project browsing and QR code functionality are not implemented.
+- **NFR03:** Access restrictions based on user roles are implemented, but equipment-specific caretaker permissions are not.
+
+The application includes responsive layouts (NFR01), password hashing (NFR02) and input validation (NFR04). Further improvements to responsiveness, visual consistency and usability remain in the backlog.
+
+Additional planned features and improvements are documented as GitHub Issues.
+
 ---
 
 ## Your Backlog
@@ -148,7 +166,9 @@ The following tools are required to run the application locally:
 
 #### Installation
 
-1. Clone the repository:
+1. Download and extract the project ZIP file, then open a terminal in the extracted project directory.
+
+   Alternatively, if you have access to the private GitHub repository, you can clone it:
 
    ```bash
    git clone https://github.com/dipt-pa1493-ht26/pa1493-osda25-lekh-zda.git
@@ -219,3 +239,24 @@ npm run dev
 The frontend runs at `http://localhost:5173`.
 
 Open `http://localhost:5173` in your browser to access the application. You can register a new user account and log in.
+
+### Testing Management Features
+
+Newly registered accounts are assigned the `USER` role by default. To test the management functionality locally, you need an account with the `CARETAKER` or `ADMIN` role.
+
+You can assign one of these roles using Prisma Studio:
+
+1. Register a new account through the application.
+2. Open a terminal in the `server` directory and run:
+
+   ```bash
+   npx prisma studio
+   ```
+
+3. Open the `User` table and find the registered account.
+4. Change the user's `role` to `CARETAKER` or `ADMIN` and save the change.
+5. Log out and log in again.
+
+The Management Dashboard and related features will now be available through the navigation menu.
+
+If the database is empty, you can create equipment types, equipment units and guides through the management interface before testing the regular user functionality.
